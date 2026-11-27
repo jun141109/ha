@@ -97,11 +97,13 @@ body.big .opt{font-size:21px}
 .bookBar{height:14px;border-radius:7px;background:light-dark(#e6ece9,#24352f);overflow:hidden}.bookBar i{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#f2b632,#d33b26);transition:width .6s}
 .bookLead{margin:8px 0 0;color:var(--sub);font-size:15px}
 .stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:18px 12px;margin-top:24px}
-.slot{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:inherit}
-.ring{position:relative;display:block;flex:none;width:96px;height:96px;max-width:100%;border-radius:50%;padding:5px;border:3px dashed light-dark(#b9c7c1,#47605a);transition:transform .2s}
+.slot{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:inherit;width:100%;min-width:96px}
+.ring{position:relative;display:block;flex:none;box-sizing:border-box;width:96px;height:96px;min-width:96px;max-width:none;border-radius:50%;padding:5px;border:3px dashed #b9c7c1;transition:transform .2s}
+.ph{display:block;width:80px;height:80px;border-radius:50%;background-color:#dfe6e3;background-size:cover;background-position:center;background-repeat:no-repeat;filter:grayscale(.9);opacity:.75}
+.slot.got .ph{filter:none;opacity:1}
 .ring img,.ring svg{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;filter:grayscale(.9);opacity:.75}
 .slot:hover .ring{transform:scale(1.06)}
-.slot.got .ring{border:4px double #d33b26;transform:rotate(-6deg)}.slot.got .ring img,.slot.got .ring svg{filter:none;opacity:1}
+.slot.got .ring{border:4px double #d33b26;padding:4px;transform:rotate(-6deg)}.slot.got .ring img,.slot.got .ring svg{filter:none;opacity:1}
 .seal{position:absolute;right:-8px;bottom:-4px;background:#d33b26;color:#fff;font-style:normal;font-family:"Jua";font-size:14px;padding:3px 9px;border-radius:12px;transform:rotate(-12deg);box-shadow:0 3px 8px #0003}
 .nm{font-size:14px;text-align:center;line-height:1.25;color:var(--sub)}.slot.got .nm{color:#d33b26;font-weight:700}
 body.hc .book{background:#000;border:2px solid #fff}body.hc .ring img{opacity:.7}
@@ -782,7 +784,7 @@ function renderBook(){
   const N=S.length,lv=n>=N?4:n>=12?3:n>=6?2:n>=1?1:0;
   $("bookN").textContent=n;$("bookTot").textContent="/"+N;$("bookFill").style.width=(n/N*100)+"%";
   $("bookLv").textContent=t("lvT")[lv];$("bookLead").textContent=n>=N?t("lvDone"):t("lvNext")(lv===0?1:lv===1?6:lv===2?12:N,n);
-  $("stamps").innerHTML=S.map(s=>{const g=stamps[s.id];return `<button class="slot ${g?"got":""}" data-sid="${s.id}" aria-label="${esc(s.n[lang])}"><span class="ring">${s.imgs?`<img src="${stampPhotos[s.id]&&g?stampPhotos[s.id]:s.imgs[0]}" alt="" width="96" height="96" decoding="async">`:scene(s.kind)}${g?`<em class="seal">${esc(t("sealT"))}</em>`:""}</span><span class="nm">${esc(sh(s))}</span></button>`}).join("");
+  $("stamps").innerHTML=S.map(s=>{const g=stamps[s.id];return `<button class="slot ${g?"got":""}" data-sid="${s.id}" aria-label="${esc(s.n[lang])}"><span class="ring">${s.imgs?`<span class="ph" style="background-image:url('${stampPhotos[s.id]&&g?stampPhotos[s.id]:s.imgs[0]}')"></span>`:scene(s.kind)}${g?`<em class="seal">${esc(t("sealT"))}</em>`:""}</span><span class="nm">${esc(sh(s))}</span></button>`}).join("");
   $("stamps").querySelectorAll("[data-sid]").forEach(b=>b.onclick=()=>{curImg=null;openSite(S.find(s=>s.id===b.dataset.sid),"stamp",$("s2").classList.contains("on")?2:0);show(3)});
 }
 
