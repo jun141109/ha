@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공정한 즐거움</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 친절한 좌석 태블릿 안내원 — 아이도, 외국인도, 어르신도 한눈에.
+   IDEA: 기차·비행기 좌석 태블릿 + 단청 색으로 꾸민 여행 스탬프북.
+   PICTURE: 오송역 기차와 청주공항 비행기가 충북 산과 탑으로 가는 장면, 여행지마다 그린 퍼즐 그림.
+   COLOUR and TYPE: 소나무 초록 바탕, 단청 빨강 강조, 하늘 파랑 보조 / 주아체(Jua) 전체.
+   LAYOUT: 상단 바 → 한 화면씩 진행(시작·설문·추천·체험) → 아래 도장판. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0f1a17);--ink:light-dark(#14221e,#eef3ef);--sub:light-dark(#4f5f59,#a9bab3);
+--pine:light-dark(#165243,#2c8a72);--pineD:light-dark(#0e3a30,#0b2a23);--red:light-dark(#d33b26,#ff6a50);
+--sky:light-dark(#2f78c4,#6aa9ec);--card:light-dark(#f2f6f3,#17262170);--line:light-dark(#d6e0db,#2a3b35);--chip:light-dark(#ffffff,#1b2c27)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;font-synthesis:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Jua","Noto Sans KR",system-ui,sans-serif;overflow-x:clip;word-break:keep-all;overflow-wrap:anywhere}
+body.big{font-size:21px}
+body.hc{--bg:#000;--ink:#fff;--sub:#ffeb3b;--pine:#000;--pineD:#000;--card:#111;--line:#fff;--chip:#000;--red:#ffeb3b;--sky:#7fd4ff}
+h1,h2,h3{font-family:"Jua","Noto Sans KR",sans-serif;font-weight:400;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,52px)}h2{font-size:clamp(26px,4vw,36px)}h3{font-size:24px}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.top{background:var(--pine);color:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px max(4vw,14px)}
+body.hc .top{border-bottom:2px solid #fff}
+.logo{display:flex;align-items:center;gap:10px;font-family:"Jua";font-size:26px}
+.logo svg{width:38px;height:38px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tbtn{min-height:44px;padding:6px 14px;border-radius:22px;border:2px solid #ffffff60;background:transparent;color:#fff;font-size:15px}
+.tbtn[aria-pressed=true]{background:#fff;color:var(--pineD);border-color:#fff}
+body.hc .tbtn[aria-pressed=true]{background:#ffeb3b;color:#000}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(20px,4vw,44px) max(4vw,14px)}
+.screen{display:none}.screen.on{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen.on{animation:none}*{transition:none!important}}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(18px,4vw,40px);align-items:center}
+.hero svg{width:100%;height:auto;border-radius:22px;display:block}
+.lead{color:var(--sub);margin:12px 0 22px;max-width:36em}
+.label{font-weight:700;margin:20px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{min-height:48px;padding:8px 18px;border-radius:26px;border:2px solid var(--line);background:var(--chip);font-size:16px;transition:.15s}
+body.big .chip{font-size:20px}
+.chip[aria-pressed=true]{background:var(--pine);border-color:var(--pine);color:#fff}
+body.hc .chip[aria-pressed=true]{background:#ffeb3b;color:#000;border-color:#ffeb3b}
+.origin{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ob{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px;border-radius:18px;border:2px solid var(--line);background:var(--chip);text-align:left;min-height:96px}
+.ob b{font-family:"Jua";font-size:24px;font-weight:400}.ob small{color:var(--sub);font-size:14px}
+.ob[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 30%,transparent)}
+.go{margin-top:26px;min-height:56px;padding:10px 30px;border-radius:30px;border:0;background:var(--red);color:#fff;font-size:20px;font-weight:700}
+body.hc .go{color:#000}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.ghost{min-height:48px;padding:8px 20px;border-radius:26px;border:2px solid var(--line);background:transparent;font-size:16px}
+.steps{display:flex;gap:6px;margin:0 0 18px}.steps i{height:6px;flex:1;border-radius:3px;background:var(--line)}.steps i.on{background:var(--red)}
+.q{background:var(--card);border-radius:22px;padding:clamp(18px,3vw,30px);border:1px solid var(--line)}
+.q h2{margin-bottom:6px}.q p{color:var(--sub);margin:0 0 16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:22px}
+.results{display:grid;gap:18px;margin-top:20px}
+.res{display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;align-items:start}
+.res .pic{border-radius:16px;overflow:hidden;aspect-ratio:1}.res .pic svg{width:100%;height:100%;display:block}
+.rank{display:inline-block;background:var(--red);color:#fff;font-family:"Jua";font-size:18px;padding:2px 12px;border-radius:14px;margin-right:8px}
+body.hc .rank{color:#000}
+.meter{height:10px;border-radius:5px;background:var(--line);margin:10px 0 4px;overflow:hidden}.meter i{display:block;height:100%;background:var(--pine)}
+body.hc .meter i{background:#ffeb3b}
+.facts{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--sub);font-size:15px;margin:8px 0 12px}
+body.big .facts{font-size:18px}
+.why{font-size:15px;margin:0 0 12px}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.act{min-height:44px;padding:6px 16px;border-radius:22px;border:2px solid var(--pine);background:transparent;font-size:15px;font-weight:500}
+body.big .act{font-size:19px}
+.act.main{background:var(--pine);color:#fff}
+body.hc .act{border-color:#fff}body.hc .act.main{background:#ffeb3b;color:#000}
+.detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,3vw,34px);align-items:start;margin-top:16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.story{font-size:18px;line-height:1.8}body.big .story{font-size:22px}
+.puz{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--pineD);padding:3px;border-radius:16px;aspect-ratio:1;width:100%;max-width:460px}
+.tile{border:0;border-radius:6px;background-size:300% 300%;background-repeat:no-repeat;aspect-ratio:1;outline-offset:-3px}
+.tile.sel{outline:4px solid var(--red)}
+.puz.done{gap:0;padding:0}.puz.done .tile{border-radius:0}
+.msg{min-height:1.6em;font-weight:700;color:var(--red);margin:10px 0}
+.opts{display:grid;gap:10px;margin-top:14px}
+.opt{min-height:52px;text-align:left;padding:10px 18px;border-radius:14px;border:2px solid var(--line);background:var(--chip);font-size:17px}
+body.big .opt{font-size:21px}
+.opt.ok{border-color:#2e9b5b;background:color-mix(in srgb,#2e9b5b 18%,var(--chip))}
+.opt.no{border-color:var(--red);background:color-mix(in srgb,var(--red) 15%,var(--chip))}
+.book{margin-top:44px;position:relative;background:light-dark(#fffdf7,#14221f);border-radius:28px;padding:30px clamp(18px,3vw,34px) 28px;box-shadow:0 14px 40px #0b2a4a2e;overflow:hidden}
+.book::before{content:"";position:absolute;left:0;right:0;top:0;height:12px;background:repeating-linear-gradient(90deg,#d33b26 0 28px,#f2b632 28px 40px,#2f8a5f 40px 68px,#2f6fb5 68px 80px)}
+.bookHead{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.bookSeal{flex:none;width:104px;height:104px;border-radius:50%;border:4px double #d33b26;color:#d33b26;display:grid;place-content:center;text-align:center;transform:rotate(-8deg);font-family:"Jua";line-height:1;background:light-dark(#fff4f1,#2a1a17)}
+.bookSeal span{font-size:44px}.bookSeal small{font-size:18px}
+.bookInfo{flex:1 1 260px}.bookInfo h3{font-size:28px}
+.bookLv{margin:4px 0 10px;font-weight:700;color:#d33b26}
+.bookBar{height:14px;border-radius:7px;background:light-dark(#e6ece9,#24352f);overflow:hidden}.bookBar i{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#f2b632,#d33b26);transition:width .6s}
+.bookLead{margin:8px 0 0;color:var(--sub);font-size:15px}
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:18px 12px;margin-top:24px}
+.slot{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:inherit}
+.ring{position:relative;width:min(96px,100%);aspect-ratio:1;border-radius:50%;padding:5px;border:3px dashed light-dark(#b9c7c1,#47605a);transition:transform .2s}
+.ring img,.ring svg{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;filter:grayscale(1);opacity:.45}
+.slot:hover .ring{transform:scale(1.06)}
+.slot.got .ring{border:4px double #d33b26;transform:rotate(-6deg)}.slot.got .ring img,.slot.got .ring svg{filter:none;opacity:1}
+.seal{position:absolute;right:-8px;bottom:-4px;background:#d33b26;color:#fff;font-style:normal;font-family:"Jua";font-size:14px;padding:3px 9px;border-radius:12px;transform:rotate(-12deg);box-shadow:0 3px 8px #0003}
+.nm{font-size:14px;text-align:center;line-height:1.25;color:var(--sub)}.slot.got .nm{color:#d33b26;font-weight:700}
+body.hc .book{background:#000;border:2px solid #fff}body.hc .ring img{opacity:.7}
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-top:14px}
+.st{aspect-ratio:1;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;text-align:center;font-size:13px;color:var(--sub);padding:4px;line-height:1.2}
+.st.got{border:3px solid var(--red);color:var(--red);font-family:"Jua";font-size:14px;transform:rotate(-8deg);background:color-mix(in srgb,var(--red) 8%,transparent)}
+.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,140%);background:var(--pineD);color:#fff;border-radius:20px;padding:14px 18px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px #0005;transition:transform .4s,visibility .4s;visibility:hidden;z-index:9;max-width:calc(100vw - 24px)}
+.toast.on{transform:translate(-50%,0);visibility:visible}
+.toast button{min-height:44px;border-radius:22px;border:0;padding:6px 16px;background:var(--red);color:#fff;font-weight:700}
+.logo{background:#fff;border:0;color:#fff;padding:6px 16px;min-height:48px;border-radius:30px;box-shadow:0 2px 8px #0002}
+.titleImg{height:40px;width:auto;display:block}
+@media(max-width:560px){.titleImg{height:30px}}
+.ob{padding:10px 10px 16px;gap:6px}.ob img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:12px;display:block;margin-bottom:6px}.ob b{font-size:30px;padding-left:6px}.ob small{font-size:15px;padding-left:6px}
+.hub{margin-top:clamp(34px,5vw,56px);background:var(--pine);color:#fff;border-radius:26px;padding:clamp(20px,3.5vw,36px)}
+body.hc .hub{border:2px solid #fff}
+.hub .lead{color:#ffffffd0;margin:8px 0 18px}body.hc .hub .lead{color:#ffeb3b}
+.searchRow{display:flex;flex-wrap:wrap;gap:10px}
+#q{flex:1 1 260px;min-height:56px;border-radius:30px;border:0;padding:0 22px;font:inherit;font-size:18px;background:#fff;color:#14221e}
+.searchRow .go{margin:0;flex:none}
+#searchRes{display:grid;gap:10px;margin-top:14px}
+.sr{display:flex;gap:14px;align-items:center;background:#ffffff14;border-radius:16px;padding:10px;flex-wrap:wrap}
+.srPic{width:64px;height:64px;border-radius:12px;overflow:hidden;flex:none}.srPic svg{width:100%;height:100%;display:block}
+.sr>img,.sr>svg{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none}
+.sr b{font-family:"Jua";font-weight:400;font-size:21px;display:block}.sr small{color:#ffffffc0}
+.sr .acts{margin-left:auto}.sr .act{border-color:#fff;color:#fff}.sr .act.main{background:#fff;color:var(--pineD)}
+.galT{margin:26px 0 12px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.gi{position:relative;border:0;padding:0;border-radius:16px;overflow:hidden;aspect-ratio:1;background:#0003}
+.gi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}.gi:hover img{transform:scale(1.05)}
+.gi span{position:absolute;left:0;right:0;bottom:0;padding:18px 8px 7px;font-size:14px;color:#fff;text-align:left;background:linear-gradient(transparent,#000b);line-height:1.25}
+.qcTop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--sub);margin-bottom:8px}
+.qcPic{width:100%;max-width:260px;aspect-ratio:1;border-radius:16px;overflow:hidden;margin:10px 0}.qcPic img,.qcPic svg{width:100%;height:100%;object-fit:cover;display:block}
+.bigN{font-family:"Jua";font-size:clamp(48px,9vw,80px);line-height:1;color:var(--red)}
+.oPic{margin:0;position:relative;border-radius:22px;overflow:hidden;animation:in .35s ease}.oPic img{width:100%;height:auto;display:block}.oPic figcaption{position:absolute;left:14px;bottom:14px;background:#000a;color:#fff;padding:6px 14px;border-radius:16px;font-family:"Jua";font-size:22px}
+.originBlock{margin-top:clamp(22px,4vw,40px)}.originBlock .label{font-size:20px;margin-top:0}
+#originPic .oPic{margin-bottom:16px}
+.origin{gap:16px}
+.moreL{margin:0 0 14px;padding-left:1.2em}.moreL li{margin:6px 0}
+.hero{grid-template-columns:1fr}
+.hubGo{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 16px;width:100%;margin-top:clamp(26px,4vw,40px);padding:22px 26px;border:0;border-radius:22px;background:var(--pine);color:#fff;text-align:left}
+.hubGo b{font-family:"Jua";font-weight:400;font-size:clamp(26px,4vw,34px)}.hubGo small{grid-column:1;font-size:16px;color:#ffffffd0}.hubGo span{grid-row:1/3;grid-column:2;font-size:36px}
+body.hc .hubGo{border:2px solid #fff}
+.homeBtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:clamp(26px,4vw,40px)}
+.hb{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:130px;padding:22px;border:0;border-radius:22px;color:#fff;text-align:left;justify-content:flex-end}
+.hb b{font-family:"Jua";font-weight:400;font-size:clamp(26px,3.4vw,32px);line-height:1.1}.hb small{font-size:15px;color:#ffffffde}
+.hb.pz{background:#d33b26}.hb.qz{background:#2f6fb5}.hb.sd{background:#165243}
+body.hc .hb{background:#000;border:3px solid #ffeb3b}
+.oPic img{aspect-ratio:3/2!important;object-fit:cover;height:auto}
+.win{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px}.win[hidden]{display:none}
+.winBack{position:absolute;inset:0;background:#0009}
+.winBox{position:relative;width:min(1000px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--bg);border-radius:24px;box-shadow:0 20px 60px #0006;animation:in .25s ease}
+.winHead{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px 14px 24px;color:#fff;background:#165243}
+.winBox[data-k=puzzle] .winHead{background:#d33b26}.winBox[data-k=quiz] .winHead{background:#2f6fb5}
+body.hc .winHead{background:#000!important;border-bottom:2px solid #fff}
+.winX{width:48px;height:48px;border-radius:50%;border:2px solid #ffffff90;background:transparent;color:#fff;font-size:30px;line-height:1}
+.winBody{padding:clamp(16px,3vw,28px)}
+.wpGrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start}
+.gal.small{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;max-height:520px;overflow:auto}.gal.small .gi span{font-size:12px;padding:14px 6px 5px}
+#w_study .gi{background:#0002}#w_study .gi svg{width:100%;height:100%}
+#w_study #q{width:100%;min-height:54px;border-radius:28px;border:2px solid var(--line);padding:0 20px;font:inherit;font-size:18px;background:var(--chip);color:var(--ink)}
+.stGrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;margin-top:14px;align-items:start}
+.stPic{border-radius:18px;overflow:hidden}.stPic img,.stPic svg{width:100%;display:block}
+.qcGrid{display:grid;grid-template-columns:160px minmax(0,1fr);gap:18px;align-items:center;margin:10px 0}.qcGrid .qcPic{margin:0;max-width:none}
+@media(max-width:760px){.homeBtns,.wpGrid,.stGrid{grid-template-columns:1fr}.qcGrid{grid-template-columns:100px minmax(0,1fr)}}
+body.home{background:linear-gradient(180deg,light-dark(#e6f3ff,#0b1f3a) 0%,light-dark(#b9dcfb,#123a6b) 45%,light-dark(#7db8ee,#1b5596) 100%);min-height:100vh;--line:light-dark(#a9c9e8,#3a5f8a)}
+body.home .lead{color:light-dark(#2c4660,#c6d8ec)}
+body.home.hc{background:#000}
+
+.ptsBtn{display:flex;align-items:center;gap:8px;min-height:44px;padding:4px 16px 4px 5px;border-radius:24px;border:0;background:#ffd54a;color:#4a3200;font-size:19px;box-shadow:0 2px 8px #0003}
+.ptsBtn.pop{animation:pop .5s ease}@keyframes pop{40%{transform:scale(1.18)}}
+.coin{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff3b0,#f2b632 55%,#c98a00);color:#7a4d00;font-size:17px;box-shadow:inset 0 -2px 0 #0002}
+.ptsFloat{position:fixed;z-index:30;transform:translateX(-50%);font-size:26px;color:#f2a900;text-shadow:0 2px 0 #fff,0 0 8px #fff;pointer-events:none;animation:floatUp 1.6s ease forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}20%{opacity:1;transform:translate(-50%,0) scale(1.1)}100%{opacity:0;transform:translate(-50%,60px)}}
+.winBox[data-k=points] .winHead{background:#d89a0e}
+.ptsTop{display:flex;gap:18px;align-items:center;margin-bottom:18px}
+.ptsCoin{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-size:40px;color:#7a4d00;background:radial-gradient(circle at 35% 30%,#fff3b0,#f2b632 55%,#c98a00);box-shadow:inset 0 -4px 0 #0002,0 6px 16px #c98a0055}
+.ptsBig{font-size:clamp(44px,8vw,64px);line-height:1;color:#c98a00}.ptsBig span{font-size:.5em;margin-left:4px}
+.ptsCols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.ptsHow,.ptsLog{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.ptsHow li,.ptsLog li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.ptsHow b,.ptsLog b{color:#c98a00;font-weight:400}.ptsLog small{width:100%;color:var(--sub);font-size:13px}
+@media(max-width:760px){.ptsCols{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.ptsFloat,.ptsBtn.pop{animation:none}}
+.rankBtn{display:flex;align-items:center;gap:6px;min-height:44px;padding:4px 14px;border-radius:24px;border:2px solid #ffd54a;background:transparent;color:#ffd54a;font-size:16px}.rankBtn svg{width:22px;height:22px}
+.winBox[data-k=rank] .winHead{background:#7a4fc4}
+.rkMe{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;padding:18px;border-radius:20px;background:light-dark(#f4efff,#221a33);border:1px solid light-dark(#d8c9f5,#3b2c5a)}
+.rkMePts{display:flex;align-items:center;gap:8px}.rkMePts b{font-size:40px;color:#c98a00;line-height:1}.rkMePts small{font-size:20px;color:#c98a00}
+.rkForm{display:flex;flex-wrap:wrap;gap:10px;flex:1 1 300px}.rkForm input{flex:1 1 180px;min-height:52px;border-radius:26px;border:2px solid var(--line);padding:0 18px;font:inherit;font-size:18px;background:var(--chip);color:var(--ink)}.rkForm .go{margin:0}
+.rkMe .msg{width:100%;margin:0;min-height:0}
+.rkNote{color:var(--sub);font-size:15px;margin:16px 0 8px}
+.rkList{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.rkList li{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 16px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:19px}
+.rkNo{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:light-dark(#e3e9e6,#2a3a35);font-size:18px}
+.rkNick{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rkList b{font-weight:400;color:#c98a00}
+.rkList li.top1 .rkNo{background:linear-gradient(135deg,#ffe27a,#e0a800);color:#5a3d00}
+.rkList li.top2 .rkNo{background:linear-gradient(135deg,#f2f4f7,#a9b2bd);color:#333}
+.rkList li.top3 .rkNo{background:linear-gradient(135deg,#f3c39b,#b8733a);color:#3b1f08}
+.rkList li.top1{font-size:22px;border-color:#e0a800}
+.rkList li.me{outline:3px solid #7a4fc4;background:light-dark(#f4efff,#221a33)}
+.rkEmpty{padding:24px;text-align:center;color:var(--sub)}
+.note{color:var(--sub);font-size:13px;margin-top:30px}
+@media(max-width:760px){.hero,.detail{grid-template-columns:1fr}}
+@media(max-width:560px){.stamps{grid-template-columns:repeat(3,minmax(0,1fr))}.bookSeal{width:84px;height:84px}.bookSeal span{font-size:34px}.st{font-size:14px}#dPic{max-width:200px!important}.res{grid-template-columns:1fr}.res .pic{max-width:220px}.origin{grid-template-columns:1fr}.logo span{display:none}}
+</style>
+</head>
+<body class="home">
+<header class="top">
+  <button class="logo" id="homeBtn" aria-label="처음 화면"><img class="titleImg" src="img/title.png" alt="공정한 즐거움"></button>
+  <div class="tools">
+    <button class="ptsBtn" id="ptsBtn" aria-label="내 포인트"><span class="coin" aria-hidden="true">P</span><span id="ptsN">0</span></button>
+    <button class="rankBtn" id="rankBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v3h3v2a5 5 0 0 1-4.6 5A5 5 0 0 1 13 15.9V18h3v3H8v-3h3v-2.1A5 5 0 0 1 8.6 13 5 5 0 0 1 4 8V6h3zm0 5V8H6a3 3 0 0 0 1.2 2.4A6 6 0 0 1 7 8zm10 0a6 6 0 0 1-.2 2.4A3 3 0 0 0 18 8z" fill="currentColor"/></svg><span data-t="rankBtn">랭킹</span></button>
+    <button class="tbtn" data-lang="ko" aria-pressed="true">한국어</button>
+    <button class="tbtn" data-lang="en" aria-pressed="false">English</button>
+    <button class="tbtn" data-lang="zh" aria-pressed="false">中文</button>
+    <button class="tbtn" id="bigBtn" aria-pressed="false" data-t="big">큰 글씨</button>
+    <button class="tbtn" id="hcBtn" aria-pressed="false" data-t="hc">고대비</button>
+    <button class="tbtn" id="voiceBtn" aria-pressed="false" data-t="voice">자동 읽기</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 0. 시작 -->
+  <section class="screen on" id="s0">
+    <div class="hero">
+      <div>
+        <h1 data-t="title">충북 문화유산, 내리면 바로 떠나요</h1>
+        <p class="lead" data-t="lead">질문 몇 개에 답하면 나에게 맞는 충북 문화유산 여행지를 추천해 드려요. 가기 전에 그림 퍼즐, 이야기 듣기, 퀴즈로 미리 만나 보세요.</p>
+      </div>
+    </div>
+    <div class="originBlock">
+        <div class="label" data-t="whereFrom">어디에서 오시나요?</div>
+        <div id="originPic"></div>
+        <div class="origin">
+          <button class="ob" data-origin="osong" aria-pressed="false"><b data-t="osong">오송역</b><small data-t="osongS">KTX·SRT 기차 좌석에서</small></button>
+          <button class="ob" data-origin="cja" aria-pressed="false"><b data-t="cja">청주국제공항</b><small data-t="cjaS">비행기 좌석에서</small></button>
+        </div>
+        <button class="go" id="start" disabled data-t="start">추천 받기 시작</button>
+    </div>
+    <div class="homeBtns">
+      <button class="hb pz" id="goPuzzle"><b data-t="puzzleT">퍼즐 풀러 가기</b><small data-t="puzzleS">사진 조각을 맞춰 그림을 완성해요</small></button>
+      <button class="hb qz" id="goQuiz"><b data-t="quizT">퀴즈 풀러 가기</b><small data-t="quizS">5문제를 풀고 점수를 확인해요</small></button>
+      <button class="hb sd" id="goStudy"><b data-t="studyT">공부하러 가기</b><small data-t="studyS">문화유산 이야기를 읽고 들어요</small></button>
+    </div>
+  </section>
+
+  <!-- 1. 설문 -->
+  <section class="screen" id="s1">
+    <div class="steps" id="steps"></div>
+    <div class="q" id="qbox"></div>
+    <div class="row">
+      <button class="ghost" id="prev" data-t="prev">이전</button>
+      <button class="go" id="next" style="margin:0" data-t="next">다음</button>
+    </div>
+  </section>
+
+  <!-- 2. 추천 -->
+  <section class="screen" id="s2">
+    <h2 id="resTitle"></h2>
+    <p class="lead" id="resLead" style="margin-bottom:0"></p>
+    <div class="results" id="results"></div>
+    <div class="row"><button class="ghost" id="again" data-t="again">다시 설문하기</button><button class="ghost" id="showAll" data-t="showAll">모든 여행지 보기</button></div>
+  </section>
+
+  <!-- 3. 체험 -->
+  <section class="screen" id="s3">
+    <button class="ghost" id="back">←</button>
+    <div class="detail">
+      <div>
+        <h2 id="dName"></h2>
+        <div class="facts" id="dFacts"></div>
+        <div class="tabs">
+          <button class="act main" data-tab="puzzle" data-t="tPuzzle">그림 퍼즐</button>
+          <button class="act" data-tab="story" data-t="tStory">이야기 듣기</button>
+          <button class="act" data-tab="quiz" data-t="tQuiz">퀴즈</button>
+          <button class="act" data-tab="stamp" data-t="tStamp">방문 도장</button>
+        </div>
+        <div id="dPic" style="border-radius:20px;overflow:hidden;max-width:420px;margin-top:8px"></div>
+      </div>
+      <div class="panel" id="tabPanel"></div>
+    </div>
+  </section>
+
+  <section class="book">
+    <div class="bookHead">
+      <div class="bookSeal" aria-hidden="true"><span id="bookN">0</span><small id="bookTot">/18</small></div>
+      <div class="bookInfo">
+        <h3 data-t="bookT">충북 문화유산 도장판</h3>
+        <p class="bookLv" id="bookLv"></p>
+        <div class="bookBar" aria-hidden="true"><i id="bookFill"></i></div>
+        <p class="bookLead" id="bookLead"></p>
+      </div>
+    </div>
+    <div class="stamps" id="stamps"></div>
+  </section>
+  <p class="note" data-t="note">거리와 이동 시간은 직선 거리로 계산한 대략적인 값이고, 편의시설 정보는 참고용이에요. 방문 전에 각 문화유산의 공식 안내를 꼭 확인하세요.</p>
+</main>
+
+<div class="win" id="win" hidden>
+  <div class="winBack" id="winBack"></div>
+  <div class="winBox" id="winBox" role="dialog" aria-modal="true" aria-labelledby="winT">
+    <div class="winHead"><h2 id="winT"></h2><button class="winX" id="winX" aria-label="닫기">×</button></div>
+    <div class="winBody">
+      <div id="w_puzzle">
+        <div class="wpGrid"><div id="wpBoard"></div><div><h3 data-t="pickT" style="margin-bottom:10px">다른 그림 고르기</h3><div class="gal small" id="gal"></div></div></div>
+      </div>
+      <div id="w_quiz"><div id="qcBox"></div></div>
+      <div id="w_points"></div>
+      <div id="w_rank"></div>
+      <div id="w_study">
+        <div id="studyListWrap"><input id="q" type="search" autocomplete="off" aria-label="검색"><p class="lead" data-t="stHelp" style="margin:10px 0 14px">궁금한 곳을 누르면 이야기가 나와요.</p><div class="gal" id="studyList"></div></div>
+        <div id="studyView" hidden></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"><span id="toastTxt"></span><button id="toastGo"></button></div>
+
+<script>
+{
+const T={
+ko:{rankT:"포인트 랭킹",rankBtn:"랭킹",nickPh:"닉네임 (12자까지)",nickSave:"랭킹에 올리기",nickSaved:"랭킹에 올렸어요! 포인트를 모으면 순위도 자동으로 바뀌어요.",nickNeed:"닉네임을 입력해 주세요.",rankShared:"이 웹앱을 쓰는 모든 사람과 함께 보는 랭킹이에요.",rankLocal:"이 기기에서 포인트를 모은 사람들의 랭킹이에요.",rankLoading:"랭킹을 불러오는 중이에요…",rankEmpty:"아직 랭킹에 오른 사람이 없어요. 닉네임을 정하고 첫 번째가 되어 보세요!",newPlayer:"새 플레이어로 시작하기",newPlayerSure:"정말 포인트를 0으로 할까요? 한 번 더 누르세요",writeFail:"모두의 랭킹에는 올리지 못해서 이 기기 랭킹에 저장했어요.",pointsT:"내 포인트",ptsT:"모은 포인트",ptHow:"포인트 모으는 방법",ptHowList:[["퍼즐 완성","+20P (8번 안에 맞추면 +30P)"],["퀴즈 정답","+10P"],["퀴즈 도전 5문제 만점","+30P 보너스"],["문화유산 이야기 공부","+5P (곳마다 한 번)"],["방문 도장","+50P"]],ptLog:"최근 기록",ptNone:"아직 기록이 없어요. 퍼즐이나 퀴즈로 포인트를 모아 보세요!",ptR:{puzzle:"퍼즐 완성",quiz:"퀴즈 정답",perfect:"퀴즈 만점 보너스",study:"이야기 공부",stamp:"방문 도장"},sealT:"방문!",lvT:["아직 도장이 없어요","새싹 탐험가","문화유산 탐험가","문화유산 박사","충북 문화유산 마스터"],lvNext:(g,n)=>`도장 ${g-n}개를 더 모으면 다음 등급이 돼요!`,lvDone:"모든 도장을 모았어요! 정말 대단해요!",puzzleT:"퍼즐 풀러 가기",puzzleS:"사진 조각을 맞춰 그림을 완성해요",quizT:"퀴즈 풀러 가기",quizS:"5문제를 풀고 점수를 확인해요",studyT:"공부하러 가기",studyS:"문화유산 이야기를 읽고 들어요",close:"닫기",pickT:"다른 그림 고르기",stHelp:"궁금한 곳을 누르면 이야기가 나와요.",stBack:"← 목록으로",hubH:"퍼즐 · 퀴즈 바로 하기",moreT:"더 알아보기",pzGo:"퍼즐 풀러 가기 ▶",pzIntro:"9조각으로 나뉜 그림을 원래대로 맞추는 퍼즐이에요. 준비되면 아래 버튼을 눌러 퍼즐을 풀러 가요!",hubT:"퍼즐 · 퀴즈 하러 가기",hubS:"설문 없이 바로 퍼즐을 맞추고 퀴즈에 도전해요",backHub:"← 퍼즐 · 퀴즈",hubL:"설문 없이도 바로 놀 수 있어요. 여행지를 검색하거나 사진을 골라 퍼즐을 맞추고, 퀴즈에 도전해 보세요.",searchPh:"여행지 검색 (예: 탑, 직지, 충주)",noRes:"찾는 여행지가 없어요. 다른 말로 검색해 보세요.",quizGo:"퀴즈 도전 5문제",galT:"사진 퍼즐 고르기",backHome:"← 처음 화면",qcProg:(i,n)=>`${i} / ${n} 문제`,qcScore:s=>`점수 ${s}점`,qcNext:"다음 문제",qcEnd:"결과 보기",qcRes:(s,n)=>`${n}문제 중 ${s}문제를 맞혔어요!`,qcMsg:["다시 도전하면 더 잘할 수 있어요!","좋아요! 조금만 더!","문화유산 박사님이네요!"],qcAgain:"다시 도전",title:"충북 문화유산, 내리면 바로 떠나요",lead:"질문 몇 개에 답하면 나에게 맞는 충북 문화유산 여행지를 추천해 드려요. 가기 전에 그림 퍼즐, 이야기 듣기, 퀴즈로 미리 만나 보세요.",whereFrom:"어디에서 오시나요?",osong:"오송역",osongS:"KTX·SRT 기차 좌석에서",cja:"청주국제공항",cjaS:"비행기 좌석에서",start:"추천 받기 시작",prev:"이전",next:"다음",done:"추천 보기",again:"다시 설문하기",showAll:"모든 여행지 보기",back:"← 추천 목록",tPuzzle:"그림 퍼즐",tStory:"이야기 듣기",tQuiz:"퀴즈",tStamp:"방문 도장",bookT:"충북 문화유산 도장판",big:"큰 글씨",hc:"고대비",voice:"자동 읽기",
+note:"거리와 이동 시간은 직선 거리로 계산한 대략적인 값이고, 편의시설 정보는 참고용이에요. 방문 전에 각 문화유산의 공식 안내를 꼭 확인하세요.",
+qs:[["누구와 여행하나요?","하나만 골라 주세요.",["혼자","친구·연인","아이와 가족","어르신과 함께","학교·단체"]],
+["무엇이 좋아요?","여러 개 골라도 돼요.",["역사·옛 물건","절과 탑","강과 산 풍경","걷기·산책","사진 찍기"]],
+["시간이 얼마나 있나요?","하나만 골라 주세요.",["반나절","하루","1박 2일"]],
+["이동할 때 도움이 필요한가요?","하나만 골라 주세요.",["필요 없어요","오래 걷기 힘들어요","휠체어·유모차를 써요"]]],
+resT:"이곳을 추천해요",resL:o=>`${o}에서 출발하는 당신의 답에 맞춰 고른 여행지예요.`,allT:"충북 문화유산 모두 보기",allL:"마음에 드는 곳을 골라 미리 체험해 보세요.",
+match:"잘 맞음",drive:m=>`차로 약 ${m}분`,km:k=>`약 ${k}km`,acc:["경사·계단이 많아 이동이 어려워요","일부 구간만 평지예요","평지 위주라 이동이 편해요"],
+why:"추천 이유: ",whyTag:["역사 이야기가 풍부","절과 탑을 볼 수 있음","풍경이 아름다움","걷기 좋음","사진 명소","아이와 함께 좋음"],whyNear:"가까워서 짧은 시간에 다녀오기 좋음",whyAcc:"이동이 편함",
+try:"미리 체험하기",
+pzHelp:"조각 두 개를 차례로 누르면 자리가 바뀌어요. 그림을 완성해 보세요!",pzMoves:n=>`바꾼 횟수 ${n}`,pzWin:n=>`완성! ${n}번 만에 맞췄어요.`,shuffle:"다시 섞기",
+play:"▶ 읽어 주기",stop:"■ 멈추기",noVoice:"이 기기에서는 음성 읽기를 쓸 수 없어요. 글로 읽어 주세요.",
+qRight:"정답이에요!",qWrong:a=>`아쉬워요. 정답은 「${a}」예요.`,
+stampHelp:"여행지에 도착했나요? 현장에서 햄스터봇 미션을 마치거나 안내소 확인을 받은 뒤 도장을 찍어 주세요.",stampBtn:"도착! 도장 찍기",stamped:"도장을 찍었어요. 다음 여행지도 기다릴게요!",
+bookL:n=>`모은 도장 ${n} / ${S.length}`,
+toast:"깜짝 퍼즐이 도착했어요!",toastGo:"풀어 보기",oName:{osong:"오송역",cja:"청주국제공항"}},
+en:{rankT:"Points ranking",rankBtn:"Ranking",nickPh:"Nickname (up to 12)",nickSave:"Join the ranking",nickSaved:"You are on the ranking! Your rank updates as you earn points.",nickNeed:"Please enter a nickname.",rankShared:"This ranking is shared with everyone using this web app.",rankLocal:"This ranking shows players on this device.",rankLoading:"Loading the ranking…",rankEmpty:"No one is ranked yet. Pick a nickname and be the first!",newPlayer:"Start as a new player",newPlayerSure:"Reset points to 0? Press once more",writeFail:"Could not join the shared ranking, so it was saved on this device.",pointsT:"My points",ptsT:"Points collected",ptHow:"How to earn points",ptHowList:[["Finish a puzzle","+20P (+30P within 8 swaps)"],["Correct quiz answer","+10P"],["Perfect 5-question quiz","+30P bonus"],["Study a heritage story","+5P (once per site)"],["Visit stamp","+50P"]],ptLog:"Recent activity",ptNone:"No points yet. Try a puzzle or a quiz!",ptR:{puzzle:"Puzzle done",quiz:"Correct answer",perfect:"Perfect quiz bonus",study:"Story studied",stamp:"Visit stamp"},sealT:"Visited!",lvT:["No stamps yet","Sprout explorer","Heritage explorer","Heritage expert","Chungbuk heritage master"],lvNext:(g,n)=>`Collect ${g-n} more to reach the next level!`,lvDone:"You collected every stamp! Amazing!",puzzleT:"Solve a puzzle",puzzleS:"Put the photo pieces back together",quizT:"Take a quiz",quizS:"Answer 5 questions and see your score",studyT:"Go study",studyS:"Read and listen to heritage stories",close:"Close",pickT:"Pick another picture",stHelp:"Tap a place to read its story.",stBack:"← Back to list",hubH:"Puzzles & quizzes",moreT:"Learn more",pzGo:"Start the puzzle ▶",pzIntro:"Put the picture, split into 9 pieces, back together. When you are ready, press the button to start!",hubT:"Go to puzzles & quizzes",hubS:"No survey needed: solve puzzles and take quizzes right away",backHub:"← Puzzles & quizzes",hubL:"No survey needed. Search for a site or pick a photo to solve a puzzle, then take on the quiz.",searchPh:"Search sites (e.g. pagoda, Jikji, Chungju)",noRes:"No matching site. Try another word.",quizGo:"5-question quiz",galT:"Pick a photo puzzle",backHome:"← Home",qcProg:(i,n)=>`Question ${i} of ${n}`,qcScore:s=>`Score ${s}`,qcNext:"Next question",qcEnd:"See result",qcRes:(s,n)=>`You got ${s} out of ${n}!`,qcMsg:["Try again, you can do it!","Nice! Almost there!","You are a heritage expert!"],qcAgain:"Try again",title:"Step off and explore Chungbuk's heritage",lead:"Answer a few questions and we'll recommend heritage sites in Chungcheongbuk-do that suit you. Meet them first through a picture puzzle, an audio story and a quiz.",whereFrom:"Where are you arriving?",osong:"Osong Station",osongS:"From your KTX/SRT train seat",cja:"Cheongju Int'l Airport",cjaS:"From your airplane seat",start:"Get recommendations",prev:"Back",next:"Next",done:"See results",again:"Retake survey",showAll:"See all sites",back:"← Recommendations",tPuzzle:"Puzzle",tStory:"Listen",tQuiz:"Quiz",tStamp:"Visit stamp",bookT:"Chungbuk heritage stamp book",big:"Large text",hc:"High contrast",voice:"Auto read",
+note:"Distances and travel times are rough estimates from straight-line distance, and accessibility notes are for reference only. Please check each site's official information before visiting.",
+qs:[["Who are you travelling with?","Choose one.",["Alone","Friends / partner","Family with kids","With older adults","School / group"]],
+["What do you enjoy?","Choose as many as you like.",["History & artifacts","Temples & pagodas","River & mountain views","Walking","Taking photos"]],
+["How much time do you have?","Choose one.",["Half a day","One day","Overnight"]],
+["Do you need help getting around?","Choose one.",["No","Long walks are hard","Wheelchair / stroller"]]],
+resT:"We recommend",resL:o=>`Picked from your answers, starting at ${o}.`,allT:"All heritage sites in Chungbuk",allL:"Pick one and try it out before you go.",
+match:"match",drive:m=>`about ${m} min by car`,km:k=>`about ${k} km`,acc:["Many slopes or stairs","Partly level paths","Mostly level and easy to get around"],
+why:"Why: ",whyTag:["rich history","temples & pagodas","beautiful scenery","good for walking","photo spot","great with kids"],whyNear:"close by, good for a short trip",whyAcc:"easy to get around",
+try:"Try it now",
+pzHelp:"Tap two pieces to swap them. Complete the picture!",pzMoves:n=>`Swaps: ${n}`,pzWin:n=>`Done in ${n} swaps!`,shuffle:"Shuffle",
+play:"▶ Read aloud",stop:"■ Stop",noVoice:"Voice reading isn't available on this device. Please read the text.",
+qRight:"Correct!",qWrong:a=>`Not quite. The answer is "${a}".`,
+stampHelp:"Arrived? After finishing the HamsterBot mission on site or checking in at the visitor centre, collect your stamp.",stampBtn:"I'm here! Stamp",stamped:"Stamped! See you at the next site.",
+bookL:n=>`Stamps collected: ${n} / ${S.length}`,
+toast:"A surprise puzzle has arrived!",toastGo:"Play",oName:{osong:"Osong Station",cja:"Cheongju Airport"}},
+zh:{rankT:"积分排行榜",rankBtn:"排行榜",nickPh:"昵称（最多12个字）",nickSave:"登上排行榜",nickSaved:"已登上排行榜！获得积分后排名会自动更新。",nickNeed:"请输入昵称。",rankShared:"这是所有使用本网页应用的人共同查看的排行榜。",rankLocal:"这是在本设备上获得积分的人的排行榜。",rankLoading:"正在加载排行榜…",rankEmpty:"还没有人上榜。取个昵称，争当第一名吧！",newPlayer:"以新玩家身份开始",newPlayerSure:"真的要把积分清零吗？请再按一次",writeFail:"未能登上共同排行榜，已保存到本设备排行榜。",pointsT:"我的积分",ptsT:"已获得积分",ptHow:"如何获得积分",ptHowList:[["完成拼图","+20P（8次内完成+30P）"],["答对测验题","+10P"],["5道题全对","+30P 奖励"],["学习文化遗产故事","+5P（每处一次）"],["打卡印章","+50P"]],ptLog:"最近记录",ptNone:"还没有积分。试试拼图或测验吧！",ptR:{puzzle:"完成拼图",quiz:"答对题目",perfect:"测验满分奖励",study:"学习故事",stamp:"打卡印章"},sealT:"已到访",lvT:["还没有印章","萌芽探险家","文化遗产探险家","文化遗产博士","忠北文化遗产大师"],lvNext:(g,n)=>`再收集${g-n}个印章就能升级！`,lvDone:"所有印章都集齐了！太棒了！",puzzleT:"去玩拼图",puzzleS:"把照片碎片拼回原样",quizT:"去做测验",quizS:"回答5道题，看看得分",studyT:"去学习",studyS:"阅读并聆听文化遗产故事",close:"关闭",pickT:"选择其他图片",stHelp:"点击想了解的地方就会出现故事。",stBack:"← 返回列表",hubH:"拼图和小测验",moreT:"了解更多",pzGo:"去玩拼图 ▶",pzIntro:"把分成9块的图片拼回原样。准备好了就点击下面的按钮去玩拼图吧！",hubT:"去玩拼图和小测验",hubS:"不用填问卷，马上拼图、挑战小测验",backHub:"← 拼图和测验",hubL:"不用填问卷也能马上玩。搜索景点或选择照片来拼图，再挑战小测验吧。",searchPh:"搜索景点（例：塔、直指、忠州）",noRes:"没有找到相关景点，换个词试试。",quizGo:"挑战5道题",galT:"选择照片拼图",backHome:"← 首页",qcProg:(i,n)=>`第 ${i} / ${n} 题`,qcScore:s=>`得分 ${s}`,qcNext:"下一题",qcEnd:"查看结果",qcRes:(s,n)=>`${n}道题答对了${s}道！`,qcMsg:["再挑战一次，你一定可以！","不错！再加把劲！","你是文化遗产专家！"],qcAgain:"再挑战",title:"一下车，就去探访忠北文化遗产",lead:"回答几个问题，为您推荐适合的忠清北道文化遗产景点。出发前，先通过拼图、语音故事和小测验认识它们吧。",whereFrom:"您从哪里来？",osong:"五松站",osongS:"在KTX·SRT火车座位上",cja:"清州国际机场",cjaS:"在飞机座位上",start:"开始推荐",prev:"上一步",next:"下一步",done:"查看推荐",again:"重新回答",showAll:"查看全部景点",back:"← 推荐列表",tPuzzle:"拼图",tStory:"听故事",tQuiz:"小测验",tStamp:"打卡印章",bookT:"忠北文化遗产印章册",big:"大字",hc:"高对比",voice:"自动朗读",
+note:"距离和时间是按直线距离估算的大致数值，无障碍信息仅供参考。出发前请务必确认各景点的官方信息。",
+qs:[["您和谁一起旅行？","请选一项。",["独自","朋友·恋人","带孩子的家庭","和长辈一起","学校·团体"]],
+["您喜欢什么？","可以多选。",["历史·文物","寺庙与塔","江河山景","散步","拍照"]],
+["您有多少时间？","请选一项。",["半天","一天","两天一夜"]],
+["出行需要帮助吗？","请选一项。",["不需要","不便长时间步行","使用轮椅·婴儿车"]]],
+resT:"为您推荐",resL:o=>`根据您的回答挑选，从${o}出发。`,allT:"全部忠北文化遗产",allL:"选一个喜欢的地方，提前体验吧。",
+match:"匹配",drive:m=>`驾车约${m}分钟`,km:k=>`约${k}公里`,acc:["坡道或台阶较多","部分路段平坦","以平地为主，出行方便"],
+why:"推荐理由：",whyTag:["历史故事丰富","可以看到寺庙和塔","风景优美","适合散步","拍照胜地","适合带孩子"],whyNear:"距离近，适合短途",whyAcc:"出行方便",
+try:"提前体验",
+pzHelp:"依次点击两块拼图即可交换位置。完成这幅画吧！",pzMoves:n=>`交换次数 ${n}`,pzWin:n=>`完成！共交换${n}次。`,shuffle:"重新打乱",
+play:"▶ 朗读",stop:"■ 停止",noVoice:"此设备无法使用语音朗读，请阅读文字。",
+qRight:"回答正确！",qWrong:a=>`差一点。正确答案是「${a}」。`,
+stampHelp:"到达景点了吗？完成现场的仓鼠机器人任务或在游客中心确认后，盖上印章吧。",stampBtn:"到了！盖章",stamped:"盖章成功！期待在下一个景点见到您。",
+bookL:n=>`已收集印章 ${n} / ${S.length}`,
+toast:"惊喜拼图来了！",toastGo:"去玩",oName:{osong:"五松站",cja:"清州机场"}}
+};
+const ORIG={osong:[36.6200,127.3271],cja:[36.7166,127.4991]};
+// v = [역사, 절·탑, 풍경, 걷기, 사진, 아이], acc: 0 어려움 1 일부 2 편함
+const S=[
+{id:"ondal",kind:"village",imgs:["img/free1.jpg"],ll:[37.0610,128.4920],v:[2,0,2,2,3,3],acc:1,
+ n:{ko:"단양 온달관광지",en:"Ondal Tourist Park, Danyang",zh:"丹阳温达观光地"},r:{ko:"단양군 영춘면",en:"Danyang",zh:"丹阳郡"},
+ s:{ko:"온달관광지는 고구려의 장군 온달과 평강공주의 전설을 주제로 꾸민 곳이에요. 온달전시관, 온달산성, 온달동굴, 드라마 촬영장을 한곳에서 볼 수 있어요. 온달동굴은 약 4억 5천만 년 전부터 만들어져 온 것으로 여겨지는 석회암 동굴이고, 드라마 촬영장에서는 「연개소문」, 「태왕사신기」 같은 사극을 찍었어요.",
+  en:"Ondal Tourist Park is themed on the legend of the Goguryeo general Ondal and Princess Pyeonggang. It brings together the Ondal Exhibition Hall, Ondal Fortress, Ondal Cave and a drama film set. Ondal Cave is a limestone cave thought to have been forming for about 450 million years, and historical dramas such as Yeon Gaesomun and The Legend were filmed on the set.",
+  zh:"温达观光地以高句丽将军温达和平冈公主的传说为主题。在这里可以一次参观温达展示馆、温达山城、温达洞窟和电视剧拍摄地。温达洞窟是被认为约4.5亿年前开始形成的石灰岩洞，拍摄地曾拍摄《渊盖苏文》《太王四神记》等古装剧。"},
+ q:{ko:["온달관광지는 누구의 이야기를 주제로 꾸몄을까요?",["온달 장군과 평강공주","견우와 직녀","흥부와 놀부"],0],en:["Whose story is Ondal Tourist Park themed on?",["General Ondal and Princess Pyeonggang","Gyeonu and Jiknyeo","Heungbu and Nolbu"],0],zh:["温达观光地以谁的故事为主题？",["温达将军和平冈公主","牛郎和织女","兴夫和孬夫"],0]}},
+{id:"sinchaeho",kind:"village",imgs:["img/deoksudang.jpg"],ll:[36.6430,127.6060],v:[3,0,1,1,1,2],acc:1,
+ n:{ko:"청주 신채호 사당 및 묘소",en:"Shrine and Tomb of Sin Chae-ho, Cheongju",zh:"清州申采浩祠堂及墓所"},r:{ko:"청주시 낭성면",en:"Cheongju (Nangseong)",zh:"清州市琅城面"},
+ s:{ko:"단재 신채호(1880~1936)는 독립운동가이자 역사학자, 언론인이에요. 신문에 나라 사랑의 마음을 일깨우는 글을 썼고, 「조선상고사」 같은 역사책을 남겼어요. 낭성면 귀래리는 신채호가 어린 시절을 보낸 곳으로, 옛 집터에 사당과 묘소가 있고 1993년 충청북도 기념물로 지정되었어요.",
+  en:"Danjae Sin Chae-ho (1880–1936) was an independence activist, historian and journalist. He wrote newspaper articles that stirred love for the nation and left history books such as Joseon Sanggosa (Ancient History of Korea). Guirae-ri in Nangseong-myeon is where he spent his childhood; his shrine and tomb stand on the old house site, designated a Chungcheongbuk-do Monument in 1993.",
+  zh:"丹斋申采浩（1880～1936）是独立运动家、历史学家和新闻工作者。他在报纸上撰写唤起爱国之心的文章，并留下了《朝鲜上古史》等史书。琅城面归来里是他度过童年的地方，祠堂和墓所就建在旧宅址上，1993年被指定为忠清北道纪念物。"},
+ q:{ko:["신채호가 쓴 역사책은 무엇일까요?",["조선상고사","동의보감","난중일기"],0],en:["Which history book did Sin Chae-ho write?",["Joseon Sanggosa","Donguibogam","Nanjung Ilgi"],0],zh:["申采浩写的史书是哪一本？",["《朝鲜上古史》","《东医宝鉴》","《乱中日记》"],0]}},
+{id:"samnyeon",kind:"fortress",imgs:["img/sangdang2.jpg"],ll:[36.4872,127.7408],v:[3,0,2,3,2,1],acc:0,
+ n:{ko:"보은 삼년산성",en:"Samnyeonsanseong Fortress, Boeun",zh:"报恩三年山城"},r:{ko:"보은군",en:"Boeun",zh:"报恩郡"},
+ s:{ko:"삼년산성은 신라가 470년에 쌓은 돌 산성이에요. 『삼국사기』에는 쌓기 시작한 지 3년 만에 다 지어서 '삼년산성'이라고 불렀다고 적혀 있어요. 둘레가 약 1.7킬로미터이고, 성벽과 옛 시설이 잘 남아 있어 우리나라 산성을 연구하는 기준이 되는 곳이에요.",
+  en:"Samnyeonsanseong is a stone mountain fortress built by Silla in 470. According to the Samguk Sagi, it took three years to finish, which is how it got its name, 'Three-Year Mountain Fortress'. Its walls run about 1.7 km, and they are so well preserved that the fortress is a reference point for studying Korean fortresses.",
+  zh:"三年山城是新罗于470年修筑的石砌山城。据《三国史记》记载，它从开工到完工用了三年，因此得名“三年山城”。城墙周长约1.7公里，城墙和设施保存完好，是研究韩国山城的标准。"},
+ q:{ko:["삼년산성이라는 이름이 붙은 까닭은?",["쌓는 데 3년이 걸려서","왕 3명이 함께 쌓아서","3월에 쌓아서"],0],en:["Why is it called 'Three-Year' Fortress?",["It took three years to build","Three kings built it together","It was built in March"],0],zh:["为什么叫“三年山城”？",["修筑用了三年","三位国王一起修建","在三月修建"],0]}},
+{id:"cheongnamdae",kind:"village",imgs:["img/cjmuseum2.jpg"],ll:[36.4612,127.4884],v:[2,0,3,2,3,2],acc:1,
+ n:{ko:"청남대",en:"Cheongnamdae",zh:"青南台"},r:{ko:"청주시 문의면",en:"Cheongju",zh:"清州市"},
+ s:{ko:"청남대는 '따뜻한 남쪽의 청와대'라는 뜻이에요. 1983년부터 대통령의 별장으로 쓰였고, 2003년 4월 18일에 모든 사람에게 문을 열었어요. 대청호를 따라 난 산책길과 계절마다 피는 꽃이 아름답고, 대통령들이 머물던 본관도 둘러볼 수 있어요.",
+  en:"Cheongnamdae means 'the Blue House of the warm south'. It served as the presidential villa from 1983 and opened to the public on 18 April 2003. Its walking paths along Daecheong Lake and seasonal flowers are lovely, and you can tour the main building where presidents stayed.",
+  zh:"青南台意为“温暖南方的青瓦台”。自1983年起作为总统别墅使用，2003年4月18日向公众开放。沿大清湖的散步道和四季花卉十分美丽，还可以参观总统们住过的主楼。"},
+ q:{ko:["청남대는 원래 누구의 별장이었을까요?",["대통령","조선의 왕","스님"],0],en:["Whose villa was Cheongnamdae originally?",["The president's","A Joseon king's","A monk's"],0],zh:["青南台原来是谁的别墅？",["总统","朝鲜国王","僧人"],0]}},
+{id:"munui",kind:"village",imgs:["img/cheongpung1.jpg"],ll:[36.5190,127.4890],v:[3,0,2,2,2,3],acc:1,
+ n:{ko:"청주 문의문화재단지",en:"Munui Cultural Heritage Complex, Cheongju",zh:"清州文义文化遗产园区"},r:{ko:"청주시 문의면",en:"Cheongju",zh:"清州市"},
+ s:{ko:"1980년 대청댐이 완공될 때 물에 잠길 위기에 놓인 마을의 문화유산을 옮겨 와 옛 마을을 다시 꾸민 곳으로, 1997년에 만들어졌어요. 1666년에 지어진 관청 건물 문산관도 이곳으로 옮겨 왔어요. 언덕 위에서 넓은 대청호가 한눈에 내려다보여요.",
+  en:"When Daecheong Dam was completed in 1980, heritage from villages about to be flooded was moved here to recreate an old village; the complex opened in 1997. Munsangwan, a government guesthouse built in 1666, was moved here too. From the hill you get a wide view of Daecheong Lake.",
+  zh:"1980年大清坝竣工时，将面临被淹没的村庄文物迁到这里，重现古村落，园区于1997年建成。建于1666年的官衙建筑文山馆也迁到了这里。从山坡上可以俯瞰辽阔的大清湖。"},
+ q:{ko:["문의문화재단지에서 내려다보이는 호수는?",["대청호","충주호","의림지"],0],en:["Which lake can you see from the Munui complex?",["Daecheong Lake","Chungju Lake","Uirimji"],0],zh:["从文义文化遗产园区能俯瞰哪个湖？",["大清湖","忠州湖","义林池"],0]}},
+{id:"uirimji",kind:"bridge",imgs:["img/free2.jpg"],ll:[37.1745,128.2114],v:[2,0,3,2,3,2],acc:2,
+ n:{ko:"제천 의림지",en:"Uirimji Reservoir, Jecheon",zh:"堤川义林池"},r:{ko:"제천시",en:"Jecheon",zh:"堤川市"},
+ s:{ko:"의림지는 삼한 시대에 만들어졌다고 전해지는 아주 오래된 저수지예요. 조사해 보니 약 2000년 전부터 저수지가 있었다는 결과도 나왔어요. 지금도 농사에 쓸 물을 대 주고 있고, 둘레 1.8킬로미터의 둘레길을 따라 오래된 소나무와 버드나무 숲이 이어져요.",
+  en:"Uirimji is an ancient reservoir said to date from the Samhan period, and research has shown a reservoir existed here about 2,000 years ago. It still supplies water to farms today, and a 1.8 km path around it runs past old pine and willow trees.",
+  zh:"义林池相传建于三韩时代，是一座非常古老的水库。研究显示，约2000年前这里就已有水库。它至今仍为农田供水，环湖1.8公里的步道两旁是古老的松树和柳树林。"},
+ q:{ko:["의림지는 어떤 곳일까요?",["농사에 쓸 물을 모아 두는 저수지","바닷물로 소금을 만드는 곳","뜨거운 물이 나오는 온천"],0],en:["What is Uirimji?",["A reservoir storing water for farming","A place making salt from seawater","A hot spring"],0],zh:["义林池是什么地方？",["储存农业用水的水库","用海水制盐的地方","温泉"],0]}},
+{id:"hwayang",kind:"cliff",imgs:["img/free3.jpg"],ll:[36.6550,127.8060],v:[2,0,3,3,3,2],acc:1,
+ n:{ko:"괴산 화양구곡",en:"Hwayang Gugok Valley, Goesan",zh:"槐山华阳九曲"},r:{ko:"괴산군 청천면",en:"Goesan",zh:"槐山郡"},
+ s:{ko:"화양구곡은 화양천을 따라 약 3킬로미터에 걸쳐 이어지는 아홉 굽이의 아름다운 계곡이에요. 조선의 학자 송시열이 이곳에 머물며 중국의 무이구곡을 본떠 굽이마다 이름을 붙였다고 전해져요. 2014년에 명승으로 지정되었어요.",
+  en:"Hwayang Gugok is a valley of nine scenic bends along about 3 km of the Hwayangcheon stream. The Joseon scholar Song Si-yeol is said to have lived here and named each bend, following China's Wuyi Nine Bends. It was designated a Scenic Site in 2014.",
+  zh:"华阳九曲是沿华阳川约3公里延伸的九道美丽溪谷。相传朝鲜学者宋时烈曾隐居于此，仿照中国武夷九曲为每一道弯取了名字。2014年被指定为名胜。"},
+ q:{ko:["화양구곡은 몇 굽이의 계곡일까요?",["9굽이","3굽이","12굽이"],0],en:["How many bends does Hwayang Gugok have?",["9","3","12"],0],zh:["华阳九曲共有几道弯？",["9道","3道","12道"],0]}},
+{id:"jiyong",kind:"village",imgs:["img/cheongpung2.jpg"],ll:[36.3020,127.5770],v:[2,0,1,1,2,2],acc:2,
+ n:{ko:"옥천 정지용 생가",en:"Birthplace of Poet Jeong Ji-yong, Okcheon",zh:"沃川郑芝溶故居"},r:{ko:"옥천군",en:"Okcheon",zh:"沃川郡"},
+ s:{ko:"「향수」를 쓴 시인 정지용이 태어난 옥천의 초가집이에요. 1996년에 옛 모습대로 다시 지었어요. 집 앞에는 시에 나오는 것처럼 실개천이 흐르고, 바로 옆 정지용문학관에서 시인의 작품을 더 만날 수 있어요.",
+  en:"This thatched house in Okcheon is where Jeong Ji-yong, the poet who wrote 'Hyangsu' (Nostalgia), was born. It was rebuilt in 1996 as it once looked. A small stream flows in front, just like in the poem, and the Jeong Ji-yong Literary Museum next door shows more of his work.",
+  zh:"这座位于沃川的草屋是创作《乡愁》的诗人郑芝溶的出生地，1996年按原貌重建。屋前像诗中描写的那样流着小溪，旁边的郑芝溶文学馆还能看到更多他的作品。"},
+ q:{ko:["정지용 시인의 대표 시는?",["향수","진달래꽃","서시"],0],en:["Which is Jeong Ji-yong's best-known poem?",["Hyangsu (Nostalgia)","Azaleas","Prologue"],0],zh:["郑芝溶的代表诗作是？",["《乡愁》","《金达莱花》","《序诗》"],0]}},
+{id:"goguryeo",kind:"photo",imgs:["img/goguryeo1.jpg"],ll:[37.0195,127.8977],v:[3,0,1,1,1,2],acc:2,
+ n:{ko:"충주 고구려비",en:"Goguryeo Stele, Chungju",zh:"忠州高句丽碑"},r:{ko:"충주시 중앙탑면",en:"Chungju",zh:"忠州市"},
+ s:{ko:"충주 고구려비는 한반도에 남아 있는 단 하나뿐인 고구려 비석이에요. 마을 어귀에 오랫동안 서 있던 돌이었는데, 1979년에 조사해 보니 고구려 글자가 새겨진 비석이었어요. 높이 약 2미터 돌기둥의 네 면에 글자를 새겼고, 고구려가 남한강 유역까지 힘을 넓혔다는 것을 알려 줘요. 지금은 충주 고구려비 전시관에서 볼 수 있어요.",
+  en:"The Chungju Goguryeo Stele is the only Goguryeo stele left on the Korean Peninsula. It stood for a long time at the entrance of a village, until a survey in 1979 revealed Goguryeo writing on it. Text was carved on all four sides of the stone pillar, about 2 m tall, showing that Goguryeo extended its power to the Namhangang River area. Today you can see it at the Chungju Goguryeo Stele Exhibition Hall.",
+  zh:"忠州高句丽碑是朝鲜半岛上唯一留存的高句丽石碑。它长期立在村口，直到1979年调查时，人们才发现上面刻着高句丽文字。这根约2米高的石柱四面都刻有文字，说明高句丽的势力曾扩展到南汉江流域。如今可以在忠州高句丽碑展览馆参观。"},
+ q:{ko:["충주 고구려비는 어느 나라가 세운 비석일까요?",["고구려","백제","신라"],0],en:["Which kingdom erected the Chungju stele?",["Goguryeo","Baekje","Silla"],0],zh:["忠州的这块石碑是哪个国家立的？",["高句丽","百济","新罗"],0]}},
+{id:"cjmuseum",kind:"photo",imgs:["img/cjmuseum1.jpg"],ll:[36.6533,127.5083],v:[3,1,0,0,1,3],acc:1,
+ n:{ko:"국립청주박물관",en:"Cheongju National Museum",zh:"国立清州博物馆"},r:{ko:"청주시 상당구",en:"Cheongju",zh:"清州市"},
+ s:{ko:"국립청주박물관은 충북의 문화유산을 조사하고 전시하는 박물관으로, 1987년 10월 30일에 문을 열었어요. 건물은 우리나라의 대표 건축가 김수근이 설계했어요. 선사 시대부터 조선 시대까지의 유물을 볼 수 있고, 어린이박물관에서는 놀이하며 문화유산을 배울 수 있어요.",
+  en:"Cheongju National Museum researches and exhibits the heritage of Chungcheongbuk-do. It opened on 30 October 1987, in a building designed by the renowned Korean architect Kim Swoo-geun. You can see artifacts from prehistoric times to the Joseon period, and the children's museum lets kids learn about heritage through play.",
+  zh:"国立清州博物馆调查并展示忠清北道的文化遗产，于1987年10月30日开馆。建筑由韩国代表性建筑师金寿根设计。这里可以看到从史前到朝鲜时代的文物，儿童博物馆还能让孩子们在游戏中了解文化遗产。"},
+ q:{ko:["국립청주박물관이 문을 연 해는?",["1987년","1377년","2018년"],0],en:["In which year did Cheongju National Museum open?",["1987","1377","2018"],0],zh:["国立清州博物馆是哪一年开馆的？",["1987年","1377年","2018年"],0]}},
+{id:"jikji",kind:"book",ll:[36.6435,127.4718],v:[3,0,0,0,1,3],acc:2,
+ n:{ko:"청주 고인쇄박물관·흥덕사지",en:"Cheongju Early Printing Museum & Heungdeoksa Temple Site",zh:"清州古印刷博物馆·兴德寺址"},
+ r:{ko:"청주시",en:"Cheongju",zh:"清州市"},
+ s:{ko:"1377년, 청주 흥덕사에서 「직지심체요절」이 금속활자로 찍혀 나왔어요. 지금 남아 있는 금속활자 책 가운데 가장 오래된 것으로, 2001년 유네스코 세계기록유산이 되었어요. 박물관에서는 활자를 만들고 책을 찍는 과정을 한눈에 볼 수 있어요.",
+  en:"In 1377, Jikji was printed with metal movable type at Heungdeoksa Temple in Cheongju. It is the oldest surviving book printed with metal type and joined UNESCO's Memory of the World in 2001. The museum shows how the type was cast and the book was printed.",
+  zh:"1377年，《直指心体要节》在清州兴德寺用金属活字印刷而成。它是现存最古老的金属活字本，2001年被列入联合国教科文组织世界记忆遗产。博物馆展示了铸字和印书的全过程。"},
+ q:{ko:["「직지」가 흥덕사에서 찍혀 나온 해는?",["1377년","1592년","1443년"],0],en:["In which year was Jikji printed at Heungdeoksa?",["1377","1592","1443"],0],zh:["《直指》在兴德寺印刷是哪一年？",["1377年","1592年","1443年"],0]}},
+{id:"sangdang",kind:"fortress",ll:[36.6696,127.5329],v:[2,0,2,3,2,1],acc:0,
+ n:{ko:"청주 상당산성",en:"Sangdangsanseong Fortress",zh:"清州上党山城"},r:{ko:"청주시",en:"Cheongju",zh:"清州市"},
+ s:{ko:"상당산성은 청주를 지키던 산성이에요. 조선 숙종 때 돌로 다시 쌓았고, 성벽 둘레가 약 4.2킬로미터나 돼요. 성벽 길을 따라 걸으면 청주 시내와 산줄기가 시원하게 내려다보여요.",
+  en:"Sangdangsanseong is a mountain fortress that guarded Cheongju. It was rebuilt in stone during King Sukjong's reign in the Joseon period, and its walls run about 4.2 km. Walking along the wall gives wide views over the city and the hills.",
+  zh:"上党山城是守护清州的山城。朝鲜肃宗时期用石头重新修筑，城墙周长约4.2公里。沿着城墙散步，可以俯瞰清州市区和连绵的山脉。"},
+ q:{ko:["상당산성의 성벽은 무엇으로 쌓았을까요?",["돌","나무","얼음"],0],en:["What are Sangdangsanseong's walls made of?",["Stone","Wood","Ice"],0],zh:["上党山城的城墙是用什么修筑的？",["石头","木头","冰"],0]}},
+{id:"jeongbuk",kind:"mound",ll:[36.6662,127.4553],v:[2,0,2,1,3,2],acc:2,
+ n:{ko:"청주 정북동 토성",en:"Jeongbuk-dong Earthen Fortress",zh:"清州井北洞土城"},r:{ko:"청주시",en:"Cheongju",zh:"清州市"},
+ s:{ko:"정북동 토성은 아주 오래전 사람들이 흙을 다져 네모나게 쌓은 성이에요. 넓은 들판 한가운데 있어 해 질 무렵 노을과 소나무가 어우러진 모습이 아름다워 사진 명소로도 유명해요.",
+  en:"Jeongbuk-dong Fortress is a square fortress built long ago from packed earth. It stands in the middle of open fields, and its sunsets framed by pine trees make it a well-known photo spot.",
+  zh:"井北洞土城是很久以前人们用夯土筑成的方形城池。它位于广阔的田野中央，傍晚晚霞与松树相映成趣，是著名的拍照胜地。"},
+ q:{ko:["정북동 토성은 무엇으로 쌓았을까요?",["흙","벽돌","쇠"],0],en:["What is Jeongbuk-dong Fortress built from?",["Earth","Bricks","Iron"],0],zh:["井北洞土城是用什么筑成的？",["泥土","砖","铁"],0]}},
+{id:"nongdari",kind:"bridge",ll:[36.8519,127.4669],v:[2,0,2,2,3,3],acc:1,
+ n:{ko:"진천 농다리",en:"Nongdari Stone Bridge, Jincheon",zh:"镇川笼桥"},r:{ko:"진천군",en:"Jincheon",zh:"镇川郡"},
+ s:{ko:"농다리는 고려 시대에 놓였다고 전해지는 돌다리예요. 자줏빛 돌을 시멘트 없이 쌓아 28칸으로 이었는데, 구불구불한 모습이 마치 지네 같아요. 천 년 가까이 큰물에도 떠내려가지 않았다고 해요.",
+  en:"Nongdari is a stone bridge said to date from the Goryeo period. Reddish-purple stones are stacked without mortar into 28 spans, and its winding shape looks like a centipede. It is said to have withstood floods for nearly a thousand years.",
+  zh:"笼桥相传建于高丽时期，是用紫色石头不加水泥垒成的石桥，共28孔，蜿蜒的样子像一条蜈蚣。据说近千年来洪水都没能把它冲走。"},
+ q:{ko:["농다리는 몇 칸으로 이어져 있을까요?",["28칸","7칸","100칸"],0],en:["How many spans does Nongdari have?",["28","7","100"],0],zh:["笼桥共有几孔？",["28孔","7孔","100孔"],0]}},
+{id:"beopjusa",kind:"temple",ll:[36.5422,127.8335],v:[3,3,2,2,2,1],acc:1,
+ n:{ko:"보은 법주사",en:"Beopjusa Temple, Boeun",zh:"报恩法住寺"},r:{ko:"보은군 속리산",en:"Songnisan, Boeun",zh:"报恩郡俗离山"},
+ s:{ko:"속리산 품에 안긴 법주사는 2018년 「산사, 한국의 산지승원」으로 유네스코 세계유산이 되었어요. 국보 팔상전은 우리나라에 하나뿐인 나무로 만든 5층 탑이에요. 부처님의 일생을 그린 여덟 장면의 그림이 그 안에 모셔져 있어요.",
+  en:"Nestled in Songnisan, Beopjusa became a UNESCO World Heritage Site in 2018 as part of 'Sansa, Buddhist Mountain Monasteries in Korea'. Its Palsangjeon Hall, a National Treasure, is Korea's only surviving five-storey wooden pagoda, housing eight paintings of the Buddha's life.",
+  zh:"坐落在俗离山怀抱中的法住寺，于2018年作为“山寺，韩国的山地僧院”被列入世界遗产。国宝捌相殿是韩国唯一现存的五层木塔，里面供奉着描绘佛陀一生的八幅画。"},
+ q:{ko:["법주사 팔상전은 몇 층 나무 탑일까요?",["5층","3층","9층"],0],en:["How many storeys does Palsangjeon have?",["5","3","9"],0],zh:["法住寺捌相殿是几层木塔？",["5层","3层","9层"],0]}},
+{id:"jungangtap",kind:"stone",ll:[36.9993,127.8706],v:[3,3,1,1,2,2],acc:2,
+ n:{ko:"충주 탑평리 칠층석탑(중앙탑)",en:"Seven-storey Stone Pagoda, Chungju (Jungangtap)",zh:"忠州塔坪里七层石塔（中央塔）"},r:{ko:"충주시",en:"Chungju",zh:"忠州市"},
+ s:{ko:"통일신라 때 세운 국보 칠층석탑이에요. 우리 땅의 한가운데에 있다고 해서 '중앙탑'이라고도 불러요. 높이가 약 14.5미터로, 통일신라 석탑 가운데 가장 높아요. 탑 주변 공원은 평평해서 산책하기 좋아요.",
+  en:"This National Treasure was built in the Unified Silla period. It is nicknamed 'Jungangtap' (Central Pagoda) because it was said to stand at the centre of the land. About 14.5 m tall, it is the tallest stone pagoda from Unified Silla. The park around it is flat and pleasant for a stroll.",
+  zh:"这是统一新罗时期建造的国宝七层石塔。因被认为位于国土中央，又称“中央塔”。塔高约14.5米，是统一新罗石塔中最高的。周边公园地势平坦，适合散步。"},
+ q:{ko:["중앙탑은 몇 층 석탑일까요?",["7층","5층","13층"],0],en:["How many storeys does Jungangtap have?",["7","5","13"],0],zh:["中央塔是几层石塔？",["7层","5层","13层"],0]}},
+{id:"cheongpung",kind:"village",ll:[37.0040,128.1770],v:[3,1,2,2,2,3],acc:1,
+ n:{ko:"제천 청풍문화재단지",en:"Cheongpung Cultural Heritage Complex, Jecheon",zh:"堤川清风文化遗产园区"},r:{ko:"제천시",en:"Jecheon",zh:"堤川市"},
+ s:{ko:"충주댐이 생기면서 물에 잠기게 된 마을의 문화유산을 1985년 무렵 이곳으로 옮겨 모았어요. 보물 한벽루와 옛 관아, 초가집이 호수를 내려다보고 있어서 옛 마을을 걷는 기분이 들어요.",
+  en:"When the Chungju Dam was built, heritage from villages about to be flooded was moved here around 1985. Hanbyeongnu Pavilion, an old government office and thatched houses overlook the lake, so it feels like walking through an old village.",
+  zh:"修建忠州大坝时，即将被淹没的村庄文物在1985年前后被迁到这里。宝物寒碧楼、旧官衙和草屋俯瞰着湖水，漫步其中仿佛走进了古老的村庄。"},
+ q:{ko:["청풍의 문화유산을 이곳으로 옮긴 까닭은?",["댐이 생겨 물에 잠기게 되어서","지진이 나서","관광객이 너무 많아서"],0],en:["Why was Cheongpung's heritage moved here?",["A dam would flood the villages","An earthquake","Too many tourists"],0],zh:["清风的文物为什么被迁到这里？",["修建大坝村庄将被淹没","发生了地震","游客太多"],0]}},
+{id:"dodam",kind:"peaks",ll:[37.0007,128.3439],v:[1,0,3,0,3,2],acc:2,
+ n:{ko:"단양 도담삼봉",en:"Dodamsambong Peaks, Danyang",zh:"丹阳岛潭三峰"},r:{ko:"단양군",en:"Danyang",zh:"丹阳郡"},
+ s:{ko:"남한강 한가운데 세 개의 바위 봉우리가 솟아 있는 명승이에요. 조선을 세운 정도전이 이 풍경을 아껴 자신의 호를 '삼봉'이라 지었다고 전해져요. 주차장 가까이에서도 경치를 볼 수 있어요.",
+  en:"Three rocky peaks rise from the middle of the Namhangang River at this scenic site. Jeong Do-jeon, a founder of Joseon, is said to have loved the view so much that he took 'Sambong' as his pen name. You can see it from near the car park.",
+  zh:"三座岩石山峰矗立在南汉江中央，是著名的名胜。相传朝鲜开国功臣郑道传非常喜爱这里的风景，便以“三峰”为号。在停车场附近就能欣赏到美景。"},
+ q:{ko:["도담삼봉의 봉우리는 몇 개일까요?",["3개","5개","9개"],0],en:["How many peaks make up Dodamsambong?",["3","5","9"],0],zh:["岛潭三峰共有几座山峰？",["3座","5座","9座"],0]}}
+];
+
+const MORE={
+jikji:{ko:["「직지」는 원래 상·하 두 권이었는데, 지금은 하권 한 권만 남아 프랑스 국립도서관에 보관되어 있어요.","독일 구텐베르크의 금속활자 성서보다 70여 년이나 앞서 찍혔어요.","흥덕사 터에서는 '흥덕사'라는 글자가 새겨진 유물이 나와 이곳이 「직지」를 찍은 절이라는 것이 확인되었어요."],
+ en:["Jikji originally had two volumes; only the second survives, kept at the National Library of France.","It was printed more than 70 years before Gutenberg's Bible.","Artifacts inscribed with the name 'Heungdeoksa' were found at the site, confirming this was the temple where Jikji was printed."],
+ zh:["《直指》原本分上下两卷，现在只剩下卷，收藏在法国国家图书馆。","它比德国古腾堡的金属活字《圣经》早了70多年。","在兴德寺址出土了刻有“兴德寺”字样的文物，证实了这里就是印刷《直指》的寺院。"]},
+sangdang:{ko:["성벽 둘레가 약 4.2킬로미터나 되어 한 바퀴 걷는 데 1~2시간쯤 걸려요.","남문인 공남문을 비롯해 동문, 서문이 있고, 성 안에는 지금도 사람들이 사는 마을이 있어요.","성벽 위를 걸으면 청주 시내와 우암산, 멀리 산줄기가 한눈에 보여서 일출·야경 명소로도 알려져 있어요."],
+ en:["The wall is about 4.2 km long, so walking all the way around takes about one to two hours.","It has the Gongnammun south gate as well as east and west gates, and there is still a village inside the walls.","From the walls you can see Cheongju and the hills around it, making it a popular spot for sunrise and night views."],
+ zh:["城墙周长约4.2公里，绕一圈大约需要一到两个小时。","有南门拱南门以及东门、西门，城内至今还有村庄。","站在城墙上可以俯瞰清州市区和远处的山峦，也是看日出和夜景的好地方。"]},
+jeongbuk:{ko:["평평한 들판 위에 흙을 한 층 한 층 단단히 다져 쌓아 올렸어요.","성이 네모난 모양이라 하늘에서 내려다보면 반듯한 사각형이 보여요.","해 질 무렵 토성 위에 선 소나무와 노을을 찍으려고 사진가들이 많이 찾아와요."],
+ en:["It was built by packing earth layer by layer on flat farmland.","Seen from above, the fortress forms a neat square.","Photographers come at sunset to capture the pine trees on the wall against the evening sky."],
+ zh:["人们在平坦的田野上一层一层地夯土筑成。","城的形状是方形，从空中俯瞰是一个端正的四方形。","傍晚时分，很多摄影师来拍城墙上的松树和晚霞。"]},
+nongdari:{ko:["다리 길이는 약 90미터가 넘고, 돌을 쌓아 만든 교각 사이로 물이 흘러가요.","돌 사이를 시멘트로 붙이지 않고 돌끼리 맞물리게 쌓았는데도 오랜 세월을 견뎠어요.","해마다 농다리 축제가 열리고, 다리를 건너 초평호 쪽 산책길도 걸을 수 있어요."],
+ en:["The bridge is over 90 metres long, and water flows between its stacked stone piers.","The stones are interlocked without any mortar, yet it has lasted for centuries.","A Nongdari festival is held every year, and you can cross the bridge to walk trails toward Chopyeong Lake."],
+ zh:["桥长90多米，河水从垒石桥墩之间流过。","石头之间没有用水泥粘合，而是互相咬合垒成，却经受住了漫长岁月。","每年都会举办笼桥节，过桥后还可以沿步道走向初坪湖。"]},
+beopjusa:{ko:["553년에 처음 세워졌다고 전해지는 아주 오래된 절이에요.","국보인 쌍사자 석등과 석련지도 있어서 볼거리가 많아요.","속리산 깊은 숲길을 따라 걸어 들어가는 '오리숲길'도 아름다워요."],
+ en:["It is said to have been founded in 553, making it a very old temple.","It also has the National Treasures Twin Lion Stone Lantern and the stone lotus basin.","The forest path leading into the temple through Songnisan is beautiful too."],
+ zh:["相传这座古寺始建于553年。","寺内还有国宝双狮石灯和石莲池，值得一看。","沿着俗离山幽深的林间小路走进寺院，风景也很美。"]},
+jungangtap:{ko:["탑 주변은 중앙탑 사적공원으로 꾸며져 넓은 잔디밭과 조각품이 있어요.","공원 바로 옆에 탄금호가 있어 물가를 따라 산책하거나 자전거를 탈 수 있어요.","가까운 곳에 충주 고구려비와 충주박물관도 있어 함께 둘러보기 좋아요."],
+ en:["The area around the pagoda is a historic park with wide lawns and sculptures.","Tangeum Lake is right next to the park, good for walking or cycling by the water.","The Chungju Goguryeo Stele and Chungju Museum are nearby, so you can visit them together."],
+ zh:["塔的周围建成了中央塔史迹公园，有宽阔的草坪和雕塑。","公园旁边就是弹琴湖，可以沿着湖边散步或骑自行车。","附近还有忠州高句丽碑和忠州博物馆，适合一起参观。"]},
+cheongpung:{ko:["보물로 지정된 한벽루는 강가의 멋진 누각으로 유명해요.","단지에서는 청풍호(충주호)가 넓게 내려다보여요.","옛 관아, 향교, 초가집, 비석 등이 모여 있어 옛 마을을 걷는 것처럼 둘러볼 수 있어요."],
+ en:["Hanbyeongnu, designated a Treasure, is famous as a beautiful riverside pavilion.","The complex looks out over the wide Cheongpung Lake (Chungju Lake).","Old government offices, a Confucian school, thatched houses and steles are gathered here, like walking through an old village."],
+ zh:["被指定为宝物的寒碧楼是著名的江边楼阁。","在园区里可以俯瞰宽阔的清风湖（忠州湖）。","这里汇集了旧官衙、乡校、草屋和石碑，就像在古村落里漫步。"]},
+dodam:{ko:["단양에서 가장 아름다운 경치 여덟 곳인 '단양팔경' 가운데 첫 번째로 꼽혀요.","가운데 큰 봉우리에는 '삼도정'이라는 정자가 있어요.","아침 물안개가 낄 때나 해 질 무렵에 특히 아름다워 사진 명소로 유명해요."],
+ en:["It is counted first among the 'Eight Scenic Views of Danyang'.","A pavilion called Samdojeong sits on the large middle peak.","It is especially beautiful in the morning mist or at sunset, making it a famous photo spot."],
+ zh:["它被列为“丹阳八景”中的第一景。","中间的大山峰上有一座名叫“三岛亭”的亭子。","清晨江雾弥漫或傍晚时分尤其美丽，是著名的拍照胜地。"]},
+goguryeo:{ko:["1981년에 국보로 지정되었어요.","높이 203센티미터, 너비 55센티미터의 돌기둥이에요.","오랜 세월 동안 글자가 많이 닳아서 학자들이 지금도 글자를 읽어 내는 연구를 하고 있어요."],
+ en:["It was designated a National Treasure in 1981.","It is a stone pillar 203 cm tall and 55 cm wide.","Many characters have worn away over time, so scholars are still working to read them."],
+ zh:["1981年被指定为国宝。","这是一根高203厘米、宽55厘米的石柱。","由于岁月侵蚀，许多文字已经磨损，学者们至今仍在研究解读。"]},
+cjmuseum:{ko:["4만 2천여 점의 유물을 가지고 있고, 그중 1,200여 점을 전시하고 있어요.","선사, 고대, 고려, 조선 시대로 나뉜 4개의 상설 전시실이 있어요.","우암산 동쪽 기슭에 있어 박물관 주변 풍경도 아름다워요."],
+ en:["It holds about 42,000 artifacts, about 1,200 of which are on display.","It has four permanent galleries: prehistoric, ancient, Goryeo and Joseon.","It sits at the eastern foot of Uamsan, so the scenery around it is lovely."],
+ zh:["馆藏文物约4.2万件，其中约1200件对外展出。","设有史前、古代、高丽、朝鲜四个常设展厅。","博物馆位于牛岩山东麓，周边风景优美。"]},
+samnyeon:{ko:["486년에 크게 고쳐 쌓았다는 기록도 남아 있어요.","가장 높은 곳의 성벽은 높이가 20미터가 넘을 만큼 웅장해요.","보은읍의 오정산을 둘러싸듯 쌓았고, 신라가 북쪽으로 나아가는 중요한 거점이었어요."],
+ en:["Records say it was extensively rebuilt in 486.","At its highest, the wall is more than 20 metres tall.","It wraps around Ojeongsan in Boeun and was an important base for Silla's push north."],
+ zh:["史料记载它在486年进行了大规模修筑。","最高处的城墙高达20多米，十分雄伟。","它环绕报恩邑的乌顶山修筑，是新罗向北推进的重要据点。"]},
+cheongnamdae:{ko:["1980년 대청댐 준공식에 왔던 대통령이 경치에 반해 짓게 되었고, 6개월 만에 완공되었어요.","개방 전까지 다섯 명의 대통령이 모두 88번 이용했어요.","봄에는 '영춘제' 꽃 축제가 열려 많은 사람이 찾아와요."],
+ en:["A president who attended the Daecheong Dam opening in 1980 loved the view; the villa was finished in just six months.","Before opening, five presidents used it 88 times in total.","In spring, the Yeongchunje flower festival draws many visitors."],
+ zh:["1980年出席大清坝竣工仪式的总统被这里的风景吸引，于是修建了别墅，仅用6个月就完工了。","开放之前，共有五位总统使用过88次。","春天会举办“迎春祭”花卉节，吸引很多游客。"]},
+munui:{ko:["대청호는 대청댐을 만들면서 생긴 호수로, 우리나라에서 손꼽히게 큰 호수예요.","1666년에 지어진 관청 건물 '문산관'을 옮겨 와 지금도 볼 수 있어요.","단지 안에는 대청호미술관도 있어 그림과 조각도 감상할 수 있어요."],
+ en:["Daecheong Lake was created by building Daecheong Dam and is one of Korea's largest lakes.","Munsangwan, a government guesthouse built in 1666, was moved here and can still be seen.","The Daecheongho Art Museum inside the complex shows paintings and sculptures."],
+ zh:["大清湖是修建大清坝时形成的湖泊，是韩国数一数二的大湖。","建于1666年的官衙建筑“文山馆”被迁到这里，至今仍可参观。","园区内还有大清湖美术馆，可以欣赏绘画和雕塑。"]},
+uirimji:{ko:["김제 벽골제, 밀양 수산제와 함께 우리나라에서 가장 오래된 저수지로 꼽혀요.","2006년에 '제천 의림지와 제림'이라는 이름으로 명승이 되었어요.","1807년에 세운 정자 영호정과 1948년에 세운 경호루가 호수 풍경을 더 아름답게 해 줘요."],
+ en:["With Byeokgolje in Gimje and Susanje in Miryang, it is counted among Korea's oldest reservoirs.","In 2006 it became a Scenic Site as 'Uirimji Reservoir and Jerim Forest'.","Yeonghojeong Pavilion (1807) and Gyeongho-ru (1948) add to the lake's beauty."],
+ zh:["它与金堤碧骨堤、密阳守山堤一起被列为韩国最古老的水库。","2006年以“堤川义林池和堤林”之名被指定为名胜。","1807年建的映湖亭和1948年建的镜湖楼让湖景更加美丽。"]},
+hwayang:{ko:["1곡 경천벽부터 9곡 파천까지 굽이마다 이름이 있어요.","4곡 금사담 위에는 송시열이 공부하던 작은 집 '암서재'가 있어요.","속리산국립공원 안에 있어 맑은 계곡물과 숲을 함께 즐길 수 있어요."],
+ en:["Each bend has a name, from Gyeongcheonbyeok (1st) to Pacheon (9th).","Above Geumsadam (4th bend) stands Amseojae, the small study of Song Si-yeol.","It lies in Songnisan National Park, with clear streams and forests."],
+ zh:["从第一曲擎天壁到第九曲巴川，每一道弯都有名字。","第四曲金沙潭上方有宋时烈读书的小屋“岩栖斋”。","这里位于俗离山国家公园内，可以同时享受清澈的溪水和森林。"]},
+jiyong:{ko:["정지용(1902~1950)은 우리말을 아름답게 다듬은 한국 현대시의 대표 시인이에요.","「향수」는 노래로도 만들어져 많은 사람이 즐겨 불러요.","생가 바로 옆 정지용문학관에서 시인의 삶과 작품을 더 자세히 알아볼 수 있어요."],
+ en:["Jeong Ji-yong (1902–1950) is a leading modern Korean poet known for his beautiful use of the Korean language.","'Hyangsu' was also turned into a popular song.","The Jeong Ji-yong Literary Museum right next door shows more of his life and work."],
+ zh:["郑芝溶（1902～1950）是将韩语雕琢得十分优美的韩国现代诗代表诗人。","《乡愁》还被谱成歌曲，很多人喜欢传唱。","故居旁边的郑芝溶文学馆可以更详细地了解诗人的生平和作品。"]},
+sinchaeho:{ko:["「황성신문」과 「대한매일신보」에 나라를 지키자는 글을 썼어요.","1929년 일본 경찰에 붙잡혀 1936년 중국 뤼순 감옥에서 세상을 떠났어요.","사당 근처에는 신채호 기념관과 동상도 있어 함께 둘러볼 수 있어요."],
+ en:["He wrote articles urging people to protect the nation in the Hwangseong Sinmun and Daehan Maeil Sinbo newspapers.","He was arrested by Japanese police in 1929 and died in Lüshun Prison, China, in 1936.","A memorial hall and statue of Sin Chae-ho are near the shrine."],
+ zh:["他在《皇城新闻》和《大韩每日申报》上发表文章，呼吁保卫国家。","1929年被日本警察逮捕，1936年在中国旅顺监狱去世。","祠堂附近还有申采浩纪念馆和铜像，可以一起参观。"]},
+ondal:{ko:["온달산성은 둘레가 682미터인 작은 산성이지만 옛 모습이 잘 남아 있어요.","온달동굴은 천연기념물이고, 안은 여름에도 시원해요.","해마다 10월에는 고구려를 주제로 한 '온달문화축제'가 열려요."],
+ en:["Ondal Fortress is small, only 682 m around, but well preserved.","Ondal Cave is a Natural Monument and stays cool even in summer.","Every October, the Goguryeo-themed Ondal Cultural Festival is held."],
+ zh:["温达山城周长仅682米，规模不大，但保存完好。","温达洞窟是天然纪念物，即使夏天里面也很凉爽。","每年10月都会举办以高句丽为主题的“温达文化节”。"]}};
+
+const QX={ondal:{ko:["해님 달님","콩쥐 팥쥐"],en:["The Sun and the Moon","Kongjwi and Patjwi"],zh:["太阳和月亮","大豆鼠和红豆鼠"]},sinchaeho:{ko:["목민심서","훈민정음"],en:["Mongmin Simseo","Hunminjeongeum"],zh:["《牧民心书》","《训民正音》"]},
+jikji:{ko:["1446년","1919년"],en:["1446","1919"],zh:["1446年","1919年"]},sangdang:{ko:["흙벽돌","유리"],en:["Mud bricks","Glass"],zh:["泥砖","玻璃"]},
+jeongbuk:{ko:["나무","얼음"],en:["Wood","Ice"],zh:["木头","冰"]},nongdari:{ko:["12칸","50칸"],en:["12","50"],zh:["12孔","50孔"]},
+beopjusa:{ko:["7층","13층"],en:["7","13"],zh:["7层","13层"]},jungangtap:{ko:["3층","9층"],en:["3","9"],zh:["3层","9层"]},
+cheongpung:{ko:["홍수로 무너져서","도로를 넓히려고"],en:["A flood destroyed them","To widen a road"],zh:["被洪水冲毁","为了拓宽道路"]},
+dodam:{ko:["1개","7개"],en:["1","7"],zh:["1座","7座"]},goguryeo:{ko:["가야","고려"],en:["Gaya","Goryeo"],zh:["伽倻","高丽"]},
+cjmuseum:{ko:["1950년","2001년"],en:["1950","2001"],zh:["1950年","2001年"]},
+samnyeon:{ko:["돌 3개로 쌓아서","3일 만에 쌓아서"],en:["It is made of three stones","It was built in three days"],zh:["用三块石头砌成","三天就建成了"]},
+cheongnamdae:{ko:["외국 대사","장군"],en:["A foreign ambassador's","A general's"],zh:["外国大使","将军"]},
+munui:{ko:["백곡호","괴산호"],en:["Baekgok Lake","Goesan Lake"],zh:["白谷湖","槐山湖"]},
+uirimji:{ko:["배를 만드는 곳","물고기만 기르는 양식장"],en:["A shipyard","A fish farm only"],zh:["造船厂","专门养鱼的养殖场"]},
+hwayang:{ko:["5굽이","7굽이"],en:["5","7"],zh:["5道","7道"]},
+jiyong:{ko:["님의 침묵","청포도"],en:["The Silence of Love","Green Grapes"],zh:["《你的沉默》","《青葡萄》"]}};
+S.forEach(s=>{if(QX[s.id])for(const L of ["ko","en","zh"])s.q[L][1]=[...s.q[L][1],...QX[s.id][L]]});
+const SI={dodam:["img/dodam1.jpg"],cheongpung:["img/cheongpung3.jpg"],beopjusa:["img/beopjusa1.jpg"],sangdang:["img/sangdang1.jpg"],jeongbuk:["img/jeongbuk1.jpg"],jikji:["img/jikji1.jpg"],nongdari:["img/nongdari1.jpg"],jungangtap:["img/jungangtap1.jpg"]};
+S.forEach(s=>{if(SI[s.id]&&!s.imgs)s.imgs=SI[s.id]});
+const EXTRA=[
+ {src:"img/osong.jpg",n:{ko:"오송역",en:"Osong Station",zh:"五松站"}},
+ {src:"img/airport.jpg",n:{ko:"청주국제공항",en:"Cheongju International Airport",zh:"清州国际机场"}},
+ {src:"img/ssalan.jpg",n:{ko:"쌀안장터 만세운동 기념비",en:"Ssalan Market Manse Movement Memorial",zh:"米安集市万岁运动纪念碑"}}];
+const PHOTOS=[...S.flatMap(s=>(s.imgs||[]).map(src=>({src,site:s}))),...EXTRA.map(e=>({src:e.src,free:e}))];
+let allMode=false,curImg=null,backTo=2,qc=null,lang="ko",origin=null,ans=[null,[],null,null],qi=0,cur=null,tab="puzzle",ranked=[];
+let stamps={};try{stamps=JSON.parse(localStorage.getItem("cb-stamps")||"{}")}catch(e){}
+const SH={ondal:["온달관광지","Ondal","温达"],sinchaeho:["신채호사당","Sin Chae-ho","申采浩祠堂"],samnyeon:["삼년산성","Samnyeon","三年山城"],cheongnamdae:["청남대","Cheongnamdae","青南台"],munui:["문의문화재단지","Munui","文义"],uirimji:["의림지","Uirimji","义林池"],hwayang:["화양구곡","Hwayang","华阳九曲"],jiyong:["정지용생가","Jeong Ji-yong","郑芝溶故居"],goguryeo:["고구려비","Goguryeo","高句丽碑"],cjmuseum:["청주박물관","Museum","清州博物馆"],jikji:["직지","Jikji","直指"],sangdang:["상당산성","Sangdang","上党山城"],jeongbuk:["정북동토성","Jeongbuk","井北洞土城"],nongdari:["농다리","Nongdari","笼桥"],beopjusa:["법주사","Beopjusa","法住寺"],jungangtap:["중앙탑","Jungangtap","中央塔"],cheongpung:["청풍","Cheongpung","清风"],dodam:["도담삼봉","Dodam","岛潭三峰"]};
+const sh=s=>SH[s.id][{ko:0,en:1,zh:2}[lang]];
+const pic=s=>s.imgs?`<img src="${s.imgs[0]}" loading="lazy" alt="${esc(s.n[lang])}" style="width:100%;height:100%;object-fit:cover;display:block">`:scene(s.kind);
+const $=id=>document.getElementById(id),t=k=>T[lang][k];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- 그림 (퍼즐용 장면) ---------- */
+const roof=(x,y,w,h,c)=>`<path d="M${x} ${y+h} Q${x+w*.12} ${y+h*.35} ${x+w*.2} ${y} L${x+w*.8} ${y} Q${x+w*.88} ${y+h*.35} ${x+w} ${y+h} Z" fill="${c}"/>`;
+function scene(kind){
+  const sunset=kind==="mound";
+  let s=`<defs><linearGradient id="sk${kind}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sunset?"#f6a04d":"#8cc6f0"}"/><stop offset="1" stop-color="${sunset?"#fde3b0":"#e3f2fb"}"/></linearGradient></defs>
+  <rect width="300" height="300" fill="url(#sk${kind})"/>
+  <circle cx="${sunset?150:236}" cy="${sunset?150:58}" r="${sunset?42:22}" fill="${sunset?"#ff6b3d":"#fff4c2"}"/>
+  <path d="M0 170 Q60 110 120 150 T240 130 T300 150 V300 H0Z" fill="#7aa88f"/>
+  <path d="M0 200 Q80 160 160 195 T300 185 V300 H0Z" fill="#4f8a6c"/>`;
+  const water=y=>`<rect y="${y}" width="300" height="${300-y}" fill="#3f86c4"/><path d="M20 ${y+20}h60M140 ${y+34}h70M60 ${y+56}h50M200 ${y+70}h60" stroke="#bfe0f7" stroke-width="3" stroke-linecap="round"/>`;
+  if(kind==="book"){s+=`<rect y="215" width="300" height="85" fill="#8a5a36"/><rect x="40" y="120" width="110" height="130" fill="#f4ead2" stroke="#6b4a2c" stroke-width="3"/><rect x="150" y="120" width="110" height="130" fill="#efe3c6" stroke="#6b4a2c" stroke-width="3"/>`;
+    for(let i=0;i<5;i++)for(let j=0;j<7;j++){s+=`<rect x="${55+i*18}" y="${135+j*15}" width="10" height="10" fill="#3a2a1e"/>`;s+=`<rect x="${165+i*18}" y="${135+j*15}" width="10" height="10" fill="#3a2a1e" opacity=".8"/>`}
+    s+=`<rect x="122" y="60" width="56" height="44" rx="4" fill="#d33b26"/><text x="150" y="91" font-size="26" text-anchor="middle" fill="#fff" font-family="serif">直指</text>`;}
+  if(kind==="fortress"){s+=`<path d="M0 230 Q150 150 300 230 V300H0Z" fill="#5c8f5f"/>`;for(let i=0;i<15;i++){const x=i*20,y=222-Math.sin(i/14*Math.PI)*58;s+=`<rect x="${x}" y="${y}" width="18" height="34" fill="#b9b2a3" stroke="#7f786b"/><rect x="${x+3}" y="${y-10}" width="12" height="10" fill="#a39b8b"/>`}
+    s+=`<rect x="118" y="132" width="64" height="40" fill="#b9b2a3" stroke="#7f786b"/><path d="M140 172 v-22 a10 10 0 0 1 20 0 v22z" fill="#3a2a1e"/><rect x="126" y="112" width="48" height="20" fill="#b8402e"/>${roof(110,92,80,22,"#2d3a38")}`;}
+  if(kind==="mound"){s+=`<path d="M10 230 L60 200 H240 L290 230Z" fill="#6f9a4b"/><rect y="230" width="300" height="70" fill="#a9c46a"/>`;[50,80,215,250].forEach(x=>s+=`<rect x="${x}" y="170" width="6" height="40" fill="#5b3b23"/><ellipse cx="${x+3}" cy="166" rx="22" ry="14" fill="#2f5a33"/>`);for(let i=0;i<14;i++)s+=`<path d="M${10+i*21} 300 q4 -30 2 -44" stroke="#c9a35c" stroke-width="3" fill="none"/>`;}
+  if(kind==="bridge"){s+=water(200);for(let i=0;i<14;i++){const x=6+i*21,y=196+Math.sin(i/2)*5;s+=`<rect x="${x}" y="${y}" width="17" height="20" rx="6" fill="#8b5a6b" stroke="#5e3a47" stroke-width="2"/>`}
+    for(let i=0;i<14;i++)s+=`<ellipse cx="${14+i*21}" cy="${226+Math.sin(i/2)*5}" rx="9" ry="3" fill="#2d6aa0"/>`;}
+  if(kind==="temple"){s+=`<rect y="240" width="300" height="60" fill="#c9b48a"/><rect x="105" y="215" width="90" height="28" fill="#8f877a"/>`;
+    for(let i=0;i<5;i++){const w=110-i*16,x=150-w/2,y=200-i*30;s+=`<rect x="${x+12}" y="${y}" width="${w-24}" height="18" fill="#c2412e"/><rect x="${x+14}" y="${y+3}" width="${w-28}" height="5" fill="#2f7f6f"/>${roof(x,y-14,w,16,"#3a4442")}`}
+    s+=`<rect x="147" y="38" width="6" height="28" fill="#c9a23c"/>`;}
+  if(kind==="stone"){s+=`<rect y="245" width="300" height="55" fill="#79b35f"/><rect x="110" y="225" width="80" height="22" fill="#9e9a92"/>`;
+    for(let i=0;i<7;i++){const w=72-i*7,x=150-w/2,y=210-i*24;s+=`<rect x="${x+8}" y="${y}" width="${w-16}" height="16" fill="#b5b0a6"/><path d="M${x} ${y} L${x+6} ${y-8} H${x+w-6} L${x+w} ${y}Z" fill="#8d877c"/>`}
+    s+=`<rect x="147" y="28" width="6" height="26" fill="#8d877c"/>`;}
+  if(kind==="cliff"){s+=water(225);s+=`<path d="M150 230 L170 120 Q200 100 240 118 L280 230Z" fill="#8a8178"/><path d="M170 120 Q200 100 240 118 L230 140 Q200 125 178 140Z" fill="#5b7f4b"/><rect x="188" y="92" width="34" height="18" fill="#c2412e"/>${roof(180,76,50,18,"#3a4442")}<path d="M30 150 l20 -30 l20 30z M60 160 l16 -24 l16 24z" fill="#2f5a33"/>`;}
+  if(kind==="village"){s+=water(235);[[30,170,90],[130,150,110],[60,200,80],[190,195,90]].forEach(([x,y,w],i)=>{s+=`<rect x="${x+10}" y="${y+18}" width="${w-20}" height="28" fill="${i%2?"#f1e6cf":"#e9dcc0"}"/><rect x="${x+w/2-6}" y="${y+28}" width="12" height="18" fill="#6b4a2c"/>`;s+=i===1?roof(x,y,w,20,"#3a4442"):`<path d="M${x} ${y+20} Q${x+w/2} ${y-8} ${x+w} ${y+20}Z" fill="#d1a84e"/>`});}
+  if(kind==="peaks"){s+=water(210);[[150,95,48],[92,150,30],[208,150,30]].forEach(([x,y,w])=>s+=`<path d="M${x-w} 225 Q${x-w*.6} ${y} ${x} ${y-6} Q${x+w*.6} ${y} ${x+w} 225Z" fill="#7d7468"/><path d="M${x-w*.5} ${y+14} Q${x} ${y-12} ${x+w*.5} ${y+14}" fill="#4d7a45"/>`);s+=`<rect x="138" y="76" width="24" height="12" fill="#c2412e"/>${roof(132,64,36,14,"#3a4442")}`;}
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">${s}</svg>`;
+}
+const svgURL=k=>`url('data:image/svg+xml;charset=utf-8,${encodeURIComponent(scene(k))}')`;
+
+/* ---------- 언어·설정 ---------- */
+function applyLang(){
+  document.documentElement.lang=lang==="zh"?"zh-CN":lang;
+  document.querySelectorAll("[data-t]").forEach(el=>{const v=T[lang][el.dataset.t];if(typeof v==="string")el.textContent=v});
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
+  renderBook();renderHome();if(winK==="points")renderPts();if(winK==="rank")renderRank();if(origin)showOrigin();
+  if(winK==="quiz"&&qc)drawQuiz();
+  if($("s1").classList.contains("on"))renderQ();
+  if($("s2").classList.contains("on"))renderResults(!allMode);
+  if($("s3").classList.contains("on"))openSite(cur,tab);
+}
+document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;stopVoice();applyLang()});
+const toggle=(btn,cls)=>{btn.onclick=()=>{const on=btn.getAttribute("aria-pressed")!=="true";btn.setAttribute("aria-pressed",on);if(cls)document.body.classList.toggle(cls,on)}};
+toggle($("bigBtn"),"big");toggle($("hcBtn"),"hc");toggle($("voiceBtn"));
+const autoVoice=()=>$("voiceBtn").getAttribute("aria-pressed")==="true";
+
+function show(n){document.querySelectorAll(".screen").forEach((s,i)=>s.classList.toggle("on",i===n));document.body.classList.toggle("home",n===0);window.scrollTo({top:0,behavior:"smooth"})}
+
+/* ---------- 시작 ---------- */
+function showOrigin(){if(!origin){$("originPic").innerHTML="";return}
+  $("originPic").innerHTML=`<figure class="oPic"><img src="img/${origin==="osong"?"osong_w":"airport_w"}.jpg" alt="${esc(t("oName")[origin])}"><figcaption>${esc(t("oName")[origin])}</figcaption></figure>`}
+document.querySelectorAll("[data-origin]").forEach(b=>b.onclick=()=>{origin=b.dataset.origin;showOrigin();document.querySelectorAll("[data-origin]").forEach(x=>x.setAttribute("aria-pressed",x===b));$("start").disabled=false});
+$("start").onclick=()=>{qi=0;renderQ();show(1)};
+
+/* ---------- 설문 ---------- */
+function renderQ(){
+  const [h,p,opts]=t("qs")[qi],multi=qi===1;
+  $("steps").innerHTML=t("qs").map((_,i)=>`<i class="${i<=qi?"on":""}"></i>`).join("");
+  $("qbox").innerHTML=`<h2>${esc(h)}</h2><p>${esc(p)}</p><div class="chips">${opts.map((o,i)=>`<button class="chip" data-i="${i}" aria-pressed="${multi?ans[1].includes(i):ans[qi]===i}">${esc(o)}</button>`).join("")}</div>`;
+  $("qbox").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{const i=+c.dataset.i;if(multi){ans[1]=ans[1].includes(i)?ans[1].filter(x=>x!==i):[...ans[1],i]}else ans[qi]=i;renderQ()});
+  $("next").textContent=qi===3?t("done"):t("next");
+  $("next").disabled=multi?ans[1].length===0:ans[qi]===null;
+  if(autoVoice())speak(h+". "+opts.join(", "));
+}
+$("prev").onclick=()=>{if(qi===0)show(0);else{qi--;renderQ()}};
+$("next").onclick=()=>{if(qi<3){qi++;renderQ()}else{rank();renderResults(true);show(2);armSurprise()}};
+
+/* ---------- 추천 (취향 벡터 유사도 + 거리 + 이동 편의) ---------- */
+function dist(a,b){const R=6371,r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]);const h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function trip(s){const road=dist(ORIG[origin],s.ll)*1.35;return{km:Math.round(road/5)*5||5,min:Math.round((road/60*60+10)/5)*5}}
+function rank(){
+  const u=[1,1,1,1,1,1];
+  ans[1].forEach(i=>{u[[0,1,2,3,4][i]]+=3});
+  const who=ans[0];if(who===2)u[5]+=4;if(who===4){u[0]+=3;u[5]+=2}if(who===1)u[4]+=2;if(who===3)u[3]-=1;
+  const lim=[60,110,999][ans[2]],need=ans[3]+(who===3?1:0);
+  const norm=v=>Math.sqrt(v.reduce((a,x)=>a+x*x,0));
+  ranked=S.map(s=>{
+    const cos=u.reduce((a,x,i)=>a+x*s.v[i],0)/(norm(u)*norm(s.v));
+    const tr=trip(s);const timeFit=tr.min<=lim?1:Math.max(0,1-(tr.min-lim)/60);
+    const accFit=need===0?1:need===1?[.3,.7,1][s.acc]:[0,.4,1][s.acc];
+    const score=cos*62+timeFit*22+accFit*16;
+    const top=u.map((x,i)=>[x*s.v[i],i]).sort((a,b)=>b[0]-a[0]).slice(0,2).filter(x=>x[0]>3).map(x=>x[1]);
+    return{s,tr,score,top,near:tr.min<=40,easy:need>0&&s.acc===2};
+  }).sort((a,b)=>b.score-a.score);
+}
+function renderResults(topOnly){
+  allMode=!topOnly;if(!origin)return;if(!ranked.length)rank();
+  const list=topOnly?ranked.slice(0,3):ranked;
+  $("resTitle").textContent=topOnly?t("resT"):t("allT");
+  $("resLead").textContent=topOnly?t("resL")(t("oName")[origin]):t("allL");
+  $("results").innerHTML=list.map((r,i)=>{
+    const pct=Math.max(40,Math.min(98,Math.round(r.score)));
+    const why=[...r.top.map(k=>t("whyTag")[k]),...(r.near?[t("whyNear")]:[]),...(r.easy?[t("whyAcc")]:[])];
+    return `<article class="res"><div class="pic">${pic(r.s)}</div><div>
+    <h3><span class="rank">${i+1}</span>${esc(r.s.n[lang])}</h3>
+    <div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div><small>${pct}% ${esc(t("match"))}</small>
+    <div class="facts"><span>${esc(r.s.r[lang])}</span><span>${esc(t("km")(r.tr.km))} · ${esc(t("drive")(r.tr.min))}</span><span>${esc(t("acc")[r.s.acc])}</span></div>
+    ${why.length?`<p class="why"><b>${esc(t("why"))}</b>${esc(why.join(", "))}</p>`:""}
+    <div class="acts"><button class="act main" data-go="${r.s.id}" data-tb="puzzle">${esc(t("tPuzzle"))}</button><button class="act" data-go="${r.s.id}" data-tb="story">${esc(t("tStory"))}</button><button class="act" data-go="${r.s.id}" data-tb="quiz">${esc(t("tQuiz"))}</button></div>
+    </div></article>`}).join("");
+  $("results").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{curImg=null;openSite(S.find(s=>s.id===b.dataset.go),b.dataset.tb,2);show(3)});
+}
+$("again").onclick=()=>{ans=[null,[],null,null];qi=0;renderQ();show(1)};
+$("showAll").onclick=()=>{renderResults(false)};
+$("back").onclick=()=>{stopVoice();if(backTo===5){show(5);return}if(backTo===0||!origin){show(0);return}renderResults(!allMode);show(2)};
+
+/* ---------- 체험: 퍼즐 · 이야기 · 퀴즈 · 도장 ---------- */
+let order=[],sel=null,moves=0;
+function openPhoto(ph,from){
+  curImg=ph.src;
+  if(ph.site){openSite(ph.site,"puzzle",from);return}
+  openSite({id:"free",free:true,n:ph.free.n,imgs:[ph.src],kind:"photo"},"puzzle",from);
+}
+function openSite(s,tb,from){
+  if(from!==undefined)backTo=from;
+  cur=s;tab=tb||"puzzle";stopVoice();
+  $("back").textContent=backTo===5?t("backHub"):backTo===0?t("backHome"):t("back");
+  const shown=curImg&&s.imgs&&s.imgs.includes(curImg)?curImg:(s.imgs?s.imgs[0]:null);
+  $("dName").textContent=s.n[lang];$("dPic").innerHTML=tab==="puzzle"?"":shown?`<img src="${shown}" alt="${esc(s.n[lang])}" style="width:100%;display:block">`:scene(s.kind);
+  document.querySelectorAll("[data-tab]").forEach(b=>{b.hidden=!!s.free&&b.dataset.tab!=="puzzle"});
+  if(s.free){$("dFacts").innerHTML="";newPuzzle(PZ);return;document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("main",b.dataset.tab==="puzzle");b.onclick=()=>openSite(cur,"puzzle")});newPuzzle();return}
+  const tr=origin?trip(s):null;
+  $("dFacts").innerHTML=`<span>${esc(s.r[lang])}</span>${tr?`<span>${esc(t("km")(tr.km))} · ${esc(t("drive")(tr.min))}</span>`:""}<span>${esc(t("acc")[s.acc])}</span>`;
+  document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("main",b.dataset.tab===tab);b.onclick=()=>openSite(cur,b.dataset.tab)});
+  if(tab==="puzzle")newPuzzle(PZ);
+  if(tab==="story"){studyPts(s);const mo=MORE[s.id]?MORE[s.id][lang]:[];$("tabPanel").innerHTML=`<p class="story" style="margin-top:0">${esc(s.s[lang])}</p>${mo.length?`<h3 style="margin:14px 0 6px">${esc(t("moreT"))}</h3><ul class="moreL">${mo.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}<button class="go playBtn" id="playBtn" style="margin-top:6px">${esc(t("play"))}</button><p class="msg" id="vMsg"></p>`;
+    $("playBtn").onclick=()=>{if(speaking){stopVoice()}else speak(s.n[lang]+". "+s.s[lang]+" "+(MORE[s.id]?MORE[s.id][lang].join(" "):""))};if(autoVoice())speak(s.n[lang]+". "+s.s[lang]+" "+(MORE[s.id]?MORE[s.id][lang].join(" "):""));}
+  if(tab==="quiz"){const [q,o,a]=s.q[lang];const idx=[0,1,2,3,4].sort(()=>Math.random()-.5);
+    $("tabPanel").innerHTML=`<h3>${esc(q)}</h3><div class="opts">${idx.map(i=>`<button class="opt" data-i="${i}">${esc(o[i])}</button>`).join("")}</div><p class="msg" id="qMsg"></p>`;
+    if(autoVoice())speak(q);
+    $("tabPanel").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;$("tabPanel").querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.i===a)x.classList.add("ok")});if(i!==a)b.classList.add("no");const m=i===a?t("qRight"):t("qWrong")(o[a]);$("qMsg").textContent=m;speak(m,true);if(i===a&&!pts.quizDone[s.id]){pts.quizDone[s.id]=1;addPts(10,"quiz",s)}});}
+  if(tab==="stamp"){const got=stamps[s.id];$("tabPanel").innerHTML=`<p>${esc(t("stampHelp"))}</p><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div class="st ${got?"got":""}" style="width:120px">${got?esc(sh(s)):"?"}</div>${got?`<p class="msg">${esc(t("stamped"))}</p>`:`<button class="go" id="stampBtn" style="margin:0">${esc(t("stampBtn"))}</button>`}</div>`;
+    if(!got)$("stampBtn").onclick=()=>{stamps[s.id]=Date.now();addPts(50,"stamp",s);try{localStorage.setItem("cb-stamps",JSON.stringify(stamps))}catch(e){}renderBook();openSite(s,"stamp")};}
+}
+function puzzleIntro(){
+  $("tabPanel").innerHTML=`<h3 style="margin-bottom:8px">${esc(t("tPuzzle"))}</h3><p style="margin-top:0">${esc(t("pzIntro"))}</p><button class="go" id="pzGo" style="margin-top:4px">${esc(t("pzGo"))}</button>`;
+  $("pzGo").onclick=newPuzzle;
+}
+const PZ={box:"tabPanel",order:[],sel:null,moves:0},WPZ={box:"wpBoard",order:[],sel:null,moves:0,img:null};
+function newPuzzle(st){st=st&&st.box?st:PZ;st.order=[0,1,2,3,4,5,6,7,8];do{st.order.sort(()=>Math.random()-.5)}while(st.order.every((v,i)=>v===i));st.sel=null;st.moves=0;drawPuzzle(st)}
+function drawPuzzle(st){st=st||PZ;
+  if(st===PZ){st.img=curImg&&cur.imgs&&cur.imgs.includes(curImg)?curImg:(cur.imgs?cur.imgs[0]:null);st.kind=cur.kind}
+  const box=$(st.box),done=st.order.every((v,i)=>v===i),bg=st.img?`url('${st.img}')`:svgURL(st.kind);
+  box.innerHTML=`${st.name?`<h3 style="margin:0 0 6px">${esc(st.name[lang])}</h3>`:""}<p style="margin-top:0">${esc(t("pzHelp"))}</p><div class="puz ${done?"done":""}">${st.order.map((v,i)=>`<button class="tile ${st.sel===i?"sel":""}" data-i="${i}" aria-label="${i+1}" style="background-image:${bg};background-position:${(v%3)*50}% ${Math.floor(v/3)*50}%" ${done?"disabled":""}></button>`).join("")}</div>
+  <p class="msg">${esc(done?t("pzWin")(st.moves):t("pzMoves")(st.moves))}</p><button class="ghost shuf">${esc(t("shuffle"))}</button>`;
+  box.querySelector(".shuf").onclick=()=>newPuzzle(st);
+  box.querySelectorAll(".tile").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(st.sel===null)st.sel=i;else{if(st.sel!==i){[st.order[st.sel],st.order[i]]=[st.order[i],st.order[st.sel]];st.moves++}st.sel=null}drawPuzzle(st);
+    if(st.order.every((v,k)=>v===k)){speak(t("pzWin")(st.moves),true);addPts(st.moves<=8?30:20,"puzzle",st===PZ?cur:(S.find(x=>x.imgs&&x.imgs.includes(st.img))))}});
+}
+
+/* ---------- AI 보이스 (브라우저 음성 합성) ---------- */
+let speaking=false;
+function speak(text,short){
+  const ss=window.speechSynthesis;
+  if(!ss||typeof SpeechSynthesisUtterance==="undefined"){const m=$("vMsg");if(m&&!short)m.textContent=t("noVoice");return}
+  try{ss.cancel();const u=new SpeechSynthesisUtterance(text);u.lang={ko:"ko-KR",en:"en-US",zh:"zh-CN"}[lang];u.rate=.95;
+    const v=ss.getVoices().find(x=>x.lang&&x.lang.replace("_","-").startsWith(u.lang.slice(0,2)));if(v)u.voice=v;
+    u.onstart=()=>{speaking=true;document.querySelectorAll(".playBtn").forEach(b=>b.textContent=t("stop"))};
+    u.onend=u.onerror=()=>{speaking=false;document.querySelectorAll(".playBtn").forEach(b=>b.textContent=t("play"))};
+    ss.speak(u)}catch(e){const m=$("vMsg");if(m)m.textContent=t("noVoice")}
+}
+function stopVoice(){try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}speaking=false;document.querySelectorAll(".playBtn").forEach(b=>b.textContent=t("play"))}
+
+/* ---------- 도장판 ---------- */
+function renderBook(){
+  const n=Object.keys(stamps).length;$("bookLead").textContent=t("bookL")(n);
+  const N=S.length,lv=n>=N?4:n>=12?3:n>=6?2:n>=1?1:0;
+  $("bookN").textContent=n;$("bookTot").textContent="/"+N;$("bookFill").style.width=(n/N*100)+"%";
+  $("bookLv").textContent=t("lvT")[lv];$("bookLead").textContent=n>=N?t("lvDone"):t("lvNext")(lv===0?1:lv===1?6:lv===2?12:N,n);
+  $("stamps").innerHTML=S.map(s=>{const g=stamps[s.id];return `<button class="slot ${g?"got":""}" data-sid="${s.id}" aria-label="${esc(s.n[lang])}"><span class="ring">${s.imgs?`<img src="${s.imgs[0]}" alt="" loading="lazy">`:scene(s.kind)}${g?`<em class="seal">${esc(t("sealT"))}</em>`:""}</span><span class="nm">${esc(sh(s))}</span></button>`}).join("");
+  $("stamps").querySelectorAll("[data-sid]").forEach(b=>b.onclick=()=>{curImg=null;openSite(S.find(s=>s.id===b.dataset.sid),"stamp",$("s2").classList.contains("on")?2:0);show(3)});
+}
+
+/* ---------- 깜짝 퍼즐 (무작위 시간) ---------- */
+let surpriseTimer=null;
+function armSurprise(){
+  clearTimeout(surpriseTimer);
+  surpriseTimer=setTimeout(()=>{
+    if($("s3").classList.contains("on")){armSurprise();return}
+    const pick=S[Math.floor(Math.random()*S.length)];
+    $("toastTxt").textContent=t("toast")+" — "+pick.n[lang];$("toastGo").textContent=t("toastGo");$("toast").classList.add("on");
+    $("toastGo").onclick=()=>{$("toast").classList.remove("on");curImg=null;openSite(pick,"puzzle",2);show(3)};
+    setTimeout(()=>{if($("toast").classList.contains("on")){$("toast").classList.remove("on");armSurprise()}},12000);
+  },30000+Math.random()*60000);
+}
+/* ---------- 창: 퍼즐 · 퀴즈 · 공부 ---------- */
+const norm=x=>String(x).toLowerCase().replace(/\s+/g,"");
+let winK=null;
+function openWin(k){
+  stopVoice();winK=k;$("win").hidden=false;document.body.style.overflow="hidden";
+  $("winBox").dataset.k=k;$("winT").textContent=t(k+"T");
+  ["puzzle","quiz","study","points","rank"].forEach(x=>$("w_"+x).hidden=x!==k);
+  if(k==="points")renderPts();
+  if(k==="rank"){resetArm=false;rankMsg="";renderRank()}
+  if(k==="puzzle"){if(!WPZ.img)pickPuzzle(PHOTOS[Math.floor(Math.random()*PHOTOS.length)]);else drawPuzzle(WPZ)}
+  if(k==="quiz"){if(!qc)startQuiz();else drawQuiz()}
+  if(k==="study")renderStudy();
+  $("winX").focus();
+}
+function closeWin(){stopVoice();$("win").hidden=true;document.body.style.overflow="";winK=null}
+$("winX").onclick=closeWin;$("winBack").onclick=closeWin;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&winK)closeWin()});
+$("goPuzzle").onclick=()=>openWin("puzzle");$("goQuiz").onclick=()=>openWin("quiz");$("goStudy").onclick=()=>openWin("study");
+function pickPuzzle(ph){WPZ.img=ph.src;WPZ.kind="photo";WPZ.name=(ph.site||ph.free).n;newPuzzle(WPZ)}
+function renderHome(){
+  $("q").placeholder=t("searchPh");
+  $("gal").innerHTML=PHOTOS.map((ph,i)=>`<button class="gi" data-ph="${i}"><img src="${ph.src}" alt="" loading="lazy"><span>${esc((ph.site||ph.free).n[lang])}</span></button>`).join("");
+  $("gal").querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>{pickPuzzle(PHOTOS[+b.dataset.ph]);$("wpBoard").scrollIntoView({behavior:"smooth",block:"start"})});
+  if(winK){$("winT").textContent=t(winK+"T");if(winK==="puzzle")drawPuzzle(WPZ);if(winK==="study")renderStudy()}
+}
+let studyCur=null;
+function renderStudy(){
+  if(studyCur){showStudy(studyCur);return}
+  $("studyView").hidden=true;$("studyListWrap").hidden=false;
+  const k=norm($("q").value);
+  const list=S.filter(s=>!k||norm([s.n.ko,s.n.en,s.n.zh,s.r.ko,s.r.en,s.r.zh,s.s[lang],SH[s.id].join(" ")].join(" ")).includes(k));
+  $("studyList").innerHTML=list.length?list.map(s=>`<button class="gi" data-st="${s.id}">${s.imgs?`<img src="${s.imgs[0]}" alt="" loading="lazy">`:scene(s.kind)}<span>${esc(s.n[lang])}</span></button>`).join(""):`<p>${esc(t("noRes"))}</p>`;
+  $("studyList").querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{showStudy(S.find(s=>s.id===b.dataset.st))});
+}
+function showStudy(s){studyPts(s);
+  studyCur=s;stopVoice();$("studyListWrap").hidden=true;$("studyView").hidden=false;
+  const mo=MORE[s.id]?MORE[s.id][lang]:[];
+  $("studyView").innerHTML=`<button class="ghost" id="stBack">${esc(t("stBack"))}</button>
+   <div class="stGrid"><div class="stPic">${s.imgs?`<img src="${s.imgs[0]}" alt="${esc(s.n[lang])}">`:scene(s.kind)}</div>
+   <div><h2>${esc(s.n[lang])}</h2><div class="facts"><span>${esc(s.r[lang])}</span></div><p class="story">${esc(s.s[lang])}</p>
+   ${mo.length?`<h3 style="margin:14px 0 6px">${esc(t("moreT"))}</h3><ul class="moreL">${mo.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   <button class="go playBtn" id="stPlay" style="margin-top:6px">${esc(t("play"))}</button><p class="msg" id="vMsg"></p></div></div>`;
+  $("stBack").onclick=()=>{studyCur=null;stopVoice();renderStudy()};
+  $("stPlay").onclick=()=>{if(speaking)stopVoice();else speak(s.n[lang]+". "+s.s[lang]+" "+mo.join(" "))};
+  if(autoVoice())speak(s.n[lang]+". "+s.s[lang]+" "+mo.join(" "));
+  $("studyView").scrollIntoView({block:"start"});
+}
+$("q").addEventListener("input",()=>{studyCur=null;renderStudy()});
+function startQuiz(){const pool=[...S].sort(()=>Math.random()-.5).slice(0,5);qc={list:pool,i:0,score:0,done:false};drawQuiz()}
+function drawQuiz(){
+  const n=qc.list.length;
+  if(qc.i>=n){const lv=qc.score>=5?2:qc.score>=3?1:0;if(qc.score===n&&!qc.bonus){qc.bonus=1;addPts(30,"perfect")}
+    $("qcBox").innerHTML=`<div class="bigN">${qc.score} / ${n}</div><h2 style="margin-top:12px">${esc(t("qcRes")(qc.score,n))}</h2><p>${esc(t("qcMsg")[lv])}</p><div class="acts"><button class="go" id="qcAgain" style="margin:0">${esc(t("qcAgain"))}</button><button class="ghost" id="qcHome">${esc(t("close"))}</button></div>`;
+    $("qcAgain").onclick=startQuiz;$("qcHome").onclick=closeWin;speak(t("qcRes")(qc.score,n),true);return}
+  const s=qc.list[qc.i],[q,o,a]=s.q[lang],idx=[0,1,2,3,4].sort(()=>Math.random()-.5);qc.done=false;
+  $("qcBox").innerHTML=`<div class="qcTop"><span>${esc(t("qcProg")(qc.i+1,n))}</span><span id="qcSc">${esc(t("qcScore")(qc.score))}</span></div><div class="steps">${qc.list.map((_,k)=>`<i class="${k<=qc.i?"on":""}"></i>`).join("")}</div>
+   <div class="qcGrid"><div class="qcPic">${pic(s)}</div><div><small>${esc(s.n[lang])}</small><h2>${esc(q)}</h2></div></div><div class="opts">${idx.map(i=>`<button class="opt" data-i="${i}">${esc(o[i])}</button>`).join("")}</div><p class="msg" id="qcMsg"></p><div id="qcNextWrap"></div>`;
+  if(autoVoice())speak(q);
+  $("qcBox").querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(qc.done)return;qc.done=true;const i=+b.dataset.i;
+    $("qcBox").querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.i===a)x.classList.add("ok")});
+    if(i===a){qc.score++;addPts(10,"quiz",s)}else b.classList.add("no");
+    const m=i===a?t("qRight"):t("qWrong")(o[a]);$("qcMsg").textContent=m;speak(m,true);
+    $("qcSc").textContent=t("qcScore")(qc.score);
+    $("qcNextWrap").innerHTML=`<button class="go" id="qcNext" style="margin-top:6px">${esc(qc.i+1>=n?t("qcEnd"):t("qcNext"))}</button>`;
+    $("qcNext").onclick=()=>{qc.i++;drawQuiz();$("winBox").scrollTop=0};$("qcNext").focus()});
+}
+
+/* ---------- 포인트 ---------- */
+let pts={total:0,log:[],studied:{},quizDone:{}};
+try{pts=Object.assign(pts,JSON.parse(localStorage.getItem("cb-points")||"{}"))}catch(e){}
+function savePts(){try{localStorage.setItem("cb-points",JSON.stringify(pts))}catch(e){}}
+function updatePts(){$("ptsN").textContent=pts.total.toLocaleString()}
+function addPts(n,r,site){
+  pts.total+=n;pts.log.unshift({n,r,site:site?site.id:null,at:Date.now()});pts.log=pts.log.slice(0,30);savePts();updatePts();
+  const f=document.createElement("div");f.className="ptsFloat";f.textContent=`+${n}P`;document.body.appendChild(f);
+  const b=$("ptsBtn").getBoundingClientRect();f.style.left=(b.left+b.width/2)+"px";f.style.top=(b.bottom+6)+"px";
+  $("ptsBtn").classList.remove("pop");void $("ptsBtn").offsetWidth;$("ptsBtn").classList.add("pop");
+  setTimeout(()=>f.remove(),1600);
+  if(winK==="points")renderPts();
+  syncRank();if(winK==="rank")renderRank();
+}
+function studyPts(s){if(!pts.studied[s.id]){pts.studied[s.id]=1;addPts(5,"study",s)}}
+function renderPts(){
+  const fmt=x=>new Date(x).toLocaleTimeString(lang==="zh"?"zh-CN":lang,{hour:"2-digit",minute:"2-digit"});
+  $("w_points").innerHTML=`<div class="ptsTop"><div class="ptsCoin" aria-hidden="true">P</div><div><small>${esc(t("ptsT"))}</small><div class="ptsBig">${pts.total.toLocaleString()}<span>P</span></div></div><button class="go" id="toRank" style="margin:0 0 0 auto">${esc(t("rankT"))} →</button></div>
+   <div class="ptsCols"><div><h3>${esc(t("ptHow"))}</h3><ul class="ptsHow">${t("ptHowList").map(([a,b])=>`<li><span>${esc(a)}</span><b>${esc(b)}</b></li>`).join("")}</ul></div>
+   <div><h3>${esc(t("ptLog"))}</h3>${pts.log.length?`<ul class="ptsLog">${pts.log.map(l=>{const s=l.site&&S.find(x=>x.id===l.site);return `<li><span>${esc(t("ptR")[l.r]||l.r)}${s?` · ${esc(sh(s))}`:""}</span><b>+${l.n}P</b><small>${esc(fmt(l.at))}</small></li>`}).join("")}</ul>`:`<p>${esc(t("ptNone"))}</p>`}</div></div>`;
+}
+$("ptsBtn").onclick=()=>openWin("points");
+document.addEventListener("click",e=>{if(e.target&&e.target.id==="toRank")openWin("rank")});
+updatePts();
+
+/* ---------- 포인트 랭킹 ---------- */
+let nick="";try{nick=localStorage.getItem("cb-nick")||""}catch(e){}
+let localRank={};try{localRank=JSON.parse(localStorage.getItem("cb-rank-local")||"{}")}catch(e){}
+let rankDb=null,myUid=null,rankRows=null,rankErr=false,rankMsg="",syncT=null,resetArm=false;
+function saveLocalRank(){if(!nick)return;localRank[nick]=pts.total;try{localStorage.setItem("cb-rank-local",JSON.stringify(localRank))}catch(e){}}
+async function pushRank(){
+  saveLocalRank();
+  if(!(rankDb&&myUid&&nick))return true;
+  try{await rankDb.doc("rank/"+myUid).set({nick:nick.slice(0,12),pts:pts.total,at:Date.now()});return true}catch(e){return false}
+}
+function syncRank(){if(!nick)return;clearTimeout(syncT);syncT=setTimeout(pushRank,1500)}
+(async()=>{try{
+  if(typeof claude==="undefined"||!claude.use)return;
+  const db=await claude.use("db"),u=await claude.use("user");if(!db||!u)return;
+  const id=await u.id();if(!id)return;rankDb=db;myUid=id;
+  const timer=setTimeout(()=>{if(rankRows===null){rankErr=true;if(winK==="rank")renderRank()}},10000);
+  db.collection("rank").orderBy("pts","desc").limit(50).onSnapshot(sn=>{
+    if(!sn.metadata.fromCache)clearTimeout(timer);rankErr=false;
+    rankRows=sn.docs.map(d=>{const x=d.data()||{};return{id:d.id,nick:String(x.nick||"?").slice(0,12),pts:Number(x.pts)||0}});
+    if(winK==="rank")renderRank();
+  },()=>{clearTimeout(timer);rankErr=true;if(winK==="rank")renderRank()});
+  if(winK==="rank")renderRank();
+}catch(e){}})();
+function renderRank(){
+  const shared=rankDb&&rankRows!==null&&!rankErr;
+  const rows=shared?rankRows:Object.entries(localRank).map(([k,v])=>({id:"l:"+k,nick:k,pts:v})).sort((a,b)=>b.pts-a.pts);
+  const isMe=r=>shared?r.id===myUid:r.nick===nick;
+  const note=rankDb&&rankRows===null&&!rankErr?t("rankLoading"):shared?t("rankShared"):t("rankLocal");
+  $("w_rank").innerHTML=`<div class="rkMe">
+     <div class="rkMePts"><span class="coin" aria-hidden="true">P</span><b>${pts.total.toLocaleString()}</b><small>P</small></div>
+     <form id="nickForm" class="rkForm"><input id="nickIn" maxlength="12" autocomplete="off" placeholder="${esc(t("nickPh"))}" aria-label="${esc(t("nickPh"))}"><button class="go" type="submit">${esc(t("nickSave"))}</button></form>
+     <p class="msg" id="rkMsg">${esc(rankMsg)}</p>
+   </div>
+   <p class="rkNote">${esc(note)}</p>
+   ${rows.length?`<ol class="rkList">${rows.slice(0,30).map((r,i)=>`<li class="${isMe(r)?"me":""} ${i<3?"top"+(i+1):""}"><span class="rkNo">${i+1}</span><span class="rkNick"></span><b>${r.pts.toLocaleString()}P</b></li>`).join("")}</ol>`:`<p class="rkEmpty">${esc(t("rankEmpty"))}</p>`}
+   <button class="ghost" id="newPlayer" style="margin-top:18px">${esc(resetArm?t("newPlayerSure"):t("newPlayer"))}</button>`;
+  $("w_rank").querySelectorAll(".rkNick").forEach((el,i)=>{el.textContent=rows[i].nick});
+  $("nickIn").value=nick;
+  $("nickForm").onsubmit=async e=>{e.preventDefault();const v=$("nickIn").value.trim().slice(0,12);
+    if(!v){rankMsg=t("nickNeed");renderRank();return}
+    if(nick&&nick!==v&&localRank[nick]!==undefined&&!rankDb){delete localRank[nick]}
+    nick=v;try{localStorage.setItem("cb-nick",nick)}catch(err){}
+    const ok=await pushRank();rankMsg=ok?t("nickSaved"):t("writeFail");if(!ok)rankDb=null;renderRank()};
+  $("newPlayer").onclick=()=>{if(!resetArm){resetArm=true;renderRank();return}
+    resetArm=false;saveLocalRank();pts={total:0,log:[],studied:{},quizDone:{}};savePts();updatePts();
+    nick="";try{localStorage.removeItem("cb-nick")}catch(e){}myUidReset();rankMsg="";renderRank()};
+}
+function myUidReset(){/* 공유 랭킹은 로그인한 계정당 한 줄이라 그대로 둬요 */}
+$("rankBtn").onclick=()=>openWin("rank");
+
+renderHome();
+renderBook();
+}
+</script>
+</body>
+</html>
