@@ -1040,7 +1040,7 @@ async function checkShot(src,rect){
       $("arDone").onclick=()=>{closeWin();if($("s3").classList.contains("on")&&cur&&cur.id===s.id)openSite(s,"stamp")};
       speak(t("arPass")(pct),true);
     }else{
-      const topS=S.find(x=>x.id===order[0][0]);$("arRes").innerHTML=`<div class="arShot no"><img src="${thumb}" alt=""></div><p class="msg">${esc(t("arFail")(s.n[lang],pct))}</p><p class="arHint">${esc(t("arTop3"))} ${order.slice(0,3).map(([id])=>esc(sh(S.find(x=>x.id===id)))).join(" · ")}</p><ul class="arTips">${t("arTips").map(x=>`<li>${esc(x)}</li>`).join("")}</ul><button class="go" id="arAgain" style="margin-top:4px">${esc(t("arRetry"))}</button>`;
+      const topS=S.find(x=>x.id===order[0][0]);$("arRes").innerHTML=`<div class="arShot no"><img src="${thumb}" alt=""></div><p class="msg">${esc(t("arFail")(s.n[lang],pct))}</p><ul class="arTips">${t("arTips").map(x=>`<li>${esc(x)}</li>`).join("")}</ul><button class="go" id="arAgain" style="margin-top:4px">${esc(t("arRetry"))}</button>`;
       $("arAgain").onclick=()=>{$("arRes").innerHTML=""};
     }
   }catch(e){$("arRes").innerHTML=`<p class="msg">${esc(t("arFail")(s.n[lang],0))}</p>`}
